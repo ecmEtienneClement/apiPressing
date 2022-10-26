@@ -6,6 +6,7 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
     id: {
       type: dataTypes.UUID,
       primaryKey: true,
+      defaultValue: dataTypes.UUIDV4,
     },
     //TODO
     nom: {
@@ -14,8 +15,10 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
       validate: {
         notEmpty: { msg: "Le nom du client ne peut étre vide." },
         notNull: { msg: "Le nom du client est requise." },
-        min: { args: [2], msg: "Le nom du client est trop court." },
-        max: { args: [15], msg: "Le nom du client est trop long." },
+        len: {
+          args: [2, 15],
+          msg: "Le nom du client doit étre comprise entre 2 à 15 lettres.",
+        },
       },
     },
     //TODO
@@ -25,13 +28,9 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
       validate: {
         notEmpty: { msg: "Le prenom du client ne peut étre vide." },
         notNull: { msg: "Le prenom du client est requise." },
-        min: {
-          args: [2],
-          msg: "Le prenom du client est trop court.",
-        },
-        max: {
-          args: [25],
-          msg: "Le prenom du client est trop long.",
+        len: {
+          args: [2, 25],
+          msg: "Le prenom du client doit étre comprise entre 2 à 25 lettres.",
         },
       },
     },
@@ -39,6 +38,7 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
     numero: {
       type: dataTypes.STRING,
       allowNull: false,
+      unique: { name: "numero", msg: "Désoler cet numéro existe déja." },
       validate: {
         notEmpty: { msg: "Le numéro du client ne peut étre vide." },
         notNull: { msg: "Le numéro du client est requise." },
@@ -52,13 +52,9 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
       validate: {
         notEmpty: { msg: "L'adresse du client ne peut étre vide." },
         notNull: { msg: "L'adresse du client est requise." },
-        min: {
-          args: [2],
-          msg: "L'adresse du client est trop court.",
-        },
-        max: {
-          args: [25],
-          msg: "L'adresse du client est trop long.",
+        len: {
+          args: [2, 35],
+          msg: "L'adresse du client doit étre comprise entre 2 à 35 lettres.",
         },
       },
     },

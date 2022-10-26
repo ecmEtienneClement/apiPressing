@@ -15,6 +15,7 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
         id: {
             type: dataTypes.UUID,
             primaryKey: true,
+            defaultValue: dataTypes.UUIDV4,
         },
         //TODO
         nom: {
@@ -23,8 +24,10 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
             validate: {
                 notEmpty: { msg: "Le nom de l'employé ne peut étre vide." },
                 notNull: { msg: "Le nom de l'employé est requise." },
-                min: { args: [2], msg: "Le nom de l'employé est trop court." },
-                max: { args: [15], msg: "Le nom de l'employé est trop long." },
+                len: {
+                    args: [2, 15],
+                    msg: "Le nom de l'employé  doit étre comprise entre 2 à 15 lettres.",
+                },
             },
         },
         //TODO
@@ -34,13 +37,9 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
             validate: {
                 notEmpty: { msg: "Le prenom de l'employé ne peut étre vide." },
                 notNull: { msg: "Le prenom de l'employé est requise." },
-                min: {
-                    args: [2],
-                    msg: "Le prenom de l'employé est trop court.",
-                },
-                max: {
-                    args: [25],
-                    msg: "Le prenom de l'employé est trop long.",
+                len: {
+                    args: [2, 25],
+                    msg: "Le prenom de l'employé  doit étre comprise entre 2 à 25 lettres.",
                 },
             },
         },
@@ -48,6 +47,7 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
         numero: {
             type: dataTypes.STRING,
             allowNull: false,
+            unique: { name: "numero", msg: "Désoler cet numéro existe déja." },
             validate: {
                 notEmpty: { msg: "Le numéro de l'employé ne peut étre vide." },
                 notNull: { msg: "Le numéro de l'employé est requise." },
@@ -61,13 +61,9 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
             validate: {
                 notEmpty: { msg: "L'adresse de l'employé ne peut étre vide." },
                 notNull: { msg: "L'adresse de l'employé est requise." },
-                min: {
-                    args: [2],
-                    msg: "L'adresse de l'employé est trop court.",
-                },
-                max: {
-                    args: [25],
-                    msg: "L'adresse de l'employé est trop long.",
+                len: {
+                    args: [2, 25],
+                    msg: "L'adresse de l'employé  doit étre comprise entre 2 à 25 lettres.",
                 },
             },
         },
@@ -85,6 +81,7 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
         email: {
             type: dataTypes.STRING,
             allowNull: false,
+            unique: { name: "email", msg: "Désoler cet e-mail existe déja." },
             validate: {
                 notEmpty: { msg: "L'e-mail de l'employé ne peut étre vide." },
                 notNull: { msg: "L'e-mail de l'employé est requise." },
@@ -101,6 +98,12 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
                 notEmpty: { msg: "Le mot de passe de l'employé ne peut étre vide." },
                 notNull: { msg: "Le mot de passe de l'employé est requise." },
             },
+        },
+        //TODO
+        role: {
+            type: dataTypes.ENUM("admin", "employer"),
+            allowNull: false,
+            defaultValue: "employer",
         },
     });
 });

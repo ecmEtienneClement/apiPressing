@@ -3,7 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (sequelize, dataTypes) => {
     sequelize.define("Etat_financier", {
         //TODO
-        id: { type: dataTypes.UUID, primaryKey: true },
+        id: {
+            type: dataTypes.UUID,
+            primaryKey: true,
+            defaultValue: dataTypes.UUIDV4,
+        },
         //TODO
         caisse: {
             type: dataTypes.INTEGER,

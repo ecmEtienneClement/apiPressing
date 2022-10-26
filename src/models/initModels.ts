@@ -70,7 +70,7 @@ async function setRelationsModels(sequelize: Sequelize): Promise<boolean> {
     compteBloquerModel.belongsTo(adminModel);
     //ADMIN  <== DEMANDE_DEPENSE
     adminModel.hasMany(demandeDepenseModel, {
-      foreignKey: { allowNull: false },
+      foreignKey: { allowNull: true },
     });
     demandeDepenseModel.belongsTo(adminModel);
 

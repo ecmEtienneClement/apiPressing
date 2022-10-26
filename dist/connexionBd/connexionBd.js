@@ -29,8 +29,8 @@ class ConnexionBd {
     //TODO
     static connexionBdDev() {
         return __awaiter(this, void 0, void 0, function* () {
-            const sequelize = new sequelize_1.Sequelize(process_1.env.bdName, process_1.env.user, process_1.env.pwd, {
-                host: process_1.env.host,
+            const sequelize = new sequelize_1.Sequelize(process_1.env.BD_NAME, process_1.env.BD_USER, process_1.env.BD_PWD, {
+                host: process_1.env.HOST,
                 dialect: "mysql",
             });
             try {
@@ -38,16 +38,15 @@ class ConnexionBd {
                 console.log("[mode dev] Connexion à la BD réussit.");
                 //Init Models
                 const dataBoolean = yield (0, initModels_1.default)(sequelize);
-                console.log("==========>" + dataBoolean);
                 if (dataBoolean) {
                     sequelize
-                        .sync({ force: true })
+                        .sync({ force: false })
                         .then((dataSequelize) => {
                         this.setSequelizeDb(dataSequelize);
-                        console.log("Le BD a été bien instancié.");
+                        console.log("[mode dev] Le BD a été bien instancié.");
                     })
                         .catch((error) => {
-                        console.log("Une erreur c'est produite l'or de la synchronisation de la BD : " +
+                        console.log("[mode dev] Une erreur c'est produite l'or de la synchronisation de la BD : " +
                             error);
                     });
                 }

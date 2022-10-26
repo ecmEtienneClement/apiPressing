@@ -6,6 +6,7 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
     id: {
       type: dataTypes.UUID,
       primaryKey: true,
+      defaultValue: dataTypes.UUIDV4,
     },
   });
 };

@@ -3,7 +3,11 @@ import { Sequelize } from "sequelize";
 export default (sequelize: Sequelize, dataTypes: any) => {
   sequelize.define("Etat_financier", {
     //TODO
-    id: { type: dataTypes.UUID, primaryKey: true },
+    id: {
+      type: dataTypes.UUID,
+      primaryKey: true,
+      defaultValue: dataTypes.UUIDV4,
+    },
     //TODO
     caisse: {
       type: dataTypes.INTEGER,

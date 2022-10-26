@@ -3,7 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (sequelize, dataTypes) => {
     sequelize.define("Facture", {
         //TODO
-        id: { type: dataTypes.UUID, primaryKey: true },
+        id: {
+            type: dataTypes.UUID,
+            primaryKey: true,
+            defaultValue: dataTypes.UUIDV4,
+        },
         //TODO
         type: {
             type: dataTypes.ENUM("Electricité", "Eaux", "Salaires", "Location"),

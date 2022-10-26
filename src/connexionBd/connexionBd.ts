@@ -18,10 +18,15 @@ export default class ConnexionBd {
 
   //TODO
   public static async connexionBdDev() {
-    const sequelize: Sequelize = new Sequelize(env.bdName, env.user, env.pwd, {
-      host: env.host,
-      dialect: "mysql",
-    });
+    const sequelize: Sequelize = new Sequelize(
+      env.BD_NAME,
+      env.BD_USER,
+      env.BD_PWD,
+      {
+        host: env.HOST,
+        dialect: "mysql",
+      }
+    );
 
     try {
       await sequelize.authenticate();
@@ -30,7 +35,7 @@ export default class ConnexionBd {
       const dataBoolean = await initModels(sequelize);
       if (dataBoolean) {
         sequelize
-          .sync({ force: true })
+          .sync({ force: false })
           .then((dataSequelize) => {
             this.setSequelizeDb(dataSequelize);
             console.log("[mode dev] Le BD a été bien instancié.");

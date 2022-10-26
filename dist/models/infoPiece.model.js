@@ -15,6 +15,7 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
         id: {
             type: dataTypes.UUID,
             primaryKey: true,
+            defaultValue: dataTypes.UUIDV4,
         },
         //TODO
         nom: {

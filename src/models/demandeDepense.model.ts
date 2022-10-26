@@ -3,7 +3,11 @@ import { Sequelize } from "sequelize";
 export default (sequelize: Sequelize, dataTypes: any) => {
   sequelize.define("Demande_depense", {
     //TODO
-    id: { type: dataTypes.UUID, primaryKey: true },
+    id: {
+      type: dataTypes.UUID,
+      primaryKey: true,
+      defaultValue: dataTypes.UUIDV4,
+    },
     //TODO
     description: {
       type: dataTypes.STRING,
@@ -15,13 +19,9 @@ export default (sequelize: Sequelize, dataTypes: any) => {
         notNull: {
           msg: "La description de la demande de dépense est requise.",
         },
-        min: {
-          args: [10],
-          msg: "La description de la demande de dépense est trop courte",
-        },
-        max: {
-          args: [500],
-          msg: "La description de la demande de dépense est trop longue",
+        len: {
+          args: [2, 500],
+          msg: "La description de la demande de dépense doit etre comprise entre 2 à 500 lettres.",
         },
       },
     },
