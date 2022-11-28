@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getInfoKiloModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Info_kilo;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.infoKilo);
 };
 const messageInfoKiloNotFound = "Cet info sur le kilo n'éxiste pas.";
 
 //TODO CREATE INFO_KILO
 const createInfoKilo = async (req: Request, res: Response) => {
   try {
-    const dataInfoKilo = await getInfoKiloModel().create({ ...req.body });
+    const dataInfoKilo = await getModels().create({
+      ...req.body,
+    });
     return res.status(201).json(dataInfoKilo);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -22,7 +25,9 @@ const createInfoKilo = async (req: Request, res: Response) => {
 //TODO GET INFO_KILO
 const getInfoKilo = async (req: Request, res: Response) => {
   try {
-    const dataInfoKilo = await getInfoKiloModel().findAll({ limit: 1 });
+    const dataInfoKilo = await getModels().findAll({
+      limit: 1,
+    });
     return res.json(dataInfoKilo);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -33,9 +38,9 @@ const getInfoKilo = async (req: Request, res: Response) => {
 const updateInfoKiloById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataInfoKilo = await getInfoKiloModel().findByPk(id);
+    const dataInfoKilo = await getModels().findByPk(id);
     if (!dataInfoKilo) {
-      return res.json({ message: messageInfoKiloNotFound });
+      return res.status(404).json({ message: messageInfoKiloNotFound });
     }
 
     const infoKiloUpdated = await dataInfoKilo.update(
@@ -52,9 +57,9 @@ const updateInfoKiloById = async (req: Request, res: Response) => {
 const deleteInfoKiloById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataInfoKilo = await getInfoKiloModel().findByPk(id);
+    const dataInfoKilo = await getModels().findByPk(id);
     if (!dataInfoKilo) {
-      return res.json({ message: messageInfoKiloNotFound });
+      return res.status(404).json({ message: messageInfoKiloNotFound });
     }
 
     await dataInfoKilo.destroy();

@@ -48,6 +48,20 @@ export default (sequelize: Sequelize, dataTypes: any) => {
       },
     },
     //TODO
+    numero: {
+      type: dataTypes.STRING,
+      allowNull: false,
+      unique: { name: "numero", msg: "Désoler cet numéro existe déja." },
+      validate: {
+        notEmpty: { msg: "Le numéro de l'administrateur ne peut étre vide." },
+        notNull: { msg: "Le numéro de l'administrateur est requise." },
+        len: {
+          args: [9, 9],
+          msg: "Le numéro de l'administrateur est incorrect.",
+        },
+      },
+    },
+    //TODO
     mdp: {
       type: dataTypes.STRING,
       allowNull: false,

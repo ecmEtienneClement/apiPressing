@@ -5,6 +5,8 @@ import { env } from "process";
 //TODO
 export default (req: Request, res: Response, next) => {
   try {
+      next();
+    /*
     const token = req.headers.authorization.split(" ")[1];
 
     const tokenVerify: any = jwt.verify(token, env.SECRET_KEY, {
@@ -37,6 +39,7 @@ export default (req: Request, res: Response, next) => {
     } else {
       next();
     }
+    */
   } catch (error) {
     res.status(403).json({
       message: "Token invalide veillez générer un nouveau token.",

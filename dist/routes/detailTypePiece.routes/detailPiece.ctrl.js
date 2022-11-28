@@ -18,52 +18,43 @@ const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
 const getModels = () => {
-    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.depense);
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.detailTypePiece);
 };
-const messageDepenseNotFound = "Cette dépense n'éxiste pas.";
-//TODO CREATE DEPENSE
-const createDepense = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const messageDetailTypePieceNotFound = "Ce détail de type piece n'éxiste pas.";
+//TODO CREATE DETAIL_PIECE
+const createDetailTypePiece = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataDepense = yield getModels().create(Object.assign({}, req.body));
-        return res.status(201).json(dataDepense);
+        const dataDetailTypePieceModel = yield getModels().create(Object.assign({}, req.body));
+        return res.status(201).json(dataDetailTypePieceModel);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
     }
 });
-//TODO GET ALL DEPENSES
-const getAllDepenses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+//TODO UPDATE DETAIL_PIECE BY ID
+const updateDetailTypePieceById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = routes_helper_1.default.getParamId(req);
     try {
-        //
-        const dataDepenses = yield getModels().findAll({
-            include: { all: true },
-        });
-        //
-        return res.json(dataDepenses);
-    }
-    catch (error) {
-        routes_errors_1.default.traitementErrorsReq(error, res);
-    }
-});
-//TODO DELETE DEPENSE BY ID
-const deleteDepenseById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = routes_helper_1.default.getParamId(req);
-        const dataDepense = yield getModels().findByPk(id);
-        if (!dataDepense) {
-            return res.status(404).json({ message: messageDepenseNotFound });
+        const dataDetailTypePieceModel = yield getModels().findByPk(id);
+        if (!dataDetailTypePieceModel) {
+            return res.status(404).json({ message: messageDetailTypePieceNotFound });
         }
-        yield dataDepense.destroy();
-        return res.json({ deleted: true });
+        const detailPieceUpdated = yield dataDetailTypePieceModel.update(Object.assign({}, req.body), { where: { id: id } });
+        return res.json(detailPieceUpdated);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
     }
 });
-//TODO DELETE ALL DEPENSES
-const deleteAllDepenses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+//TODO DELETE DETAIL_PIECE BY ID
+const deleteDetailTypePieceById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = routes_helper_1.default.getParamId(req);
     try {
-        yield getModels().drop();
+        const dataDetailTypePieceModel = yield getModels().findByPk(id);
+        if (!dataDetailTypePieceModel) {
+            return res.status(404).json({ message: messageDetailTypePieceNotFound });
+        }
+        yield dataDetailTypePieceModel.destroy();
         return res.json({ deleted: true });
     }
     catch (error) {
@@ -71,10 +62,9 @@ const deleteAllDepenses = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 //DATA ROUTES EXPORTED
-const depensesCtrl = {
-    createDepense,
-    getAllDepenses,
-    deleteDepenseById,
-    deleteAllDepenses,
+const detailPiecesCtrl = {
+    createDetailTypePiece,
+    updateDetailTypePieceById,
+    deleteDetailTypePieceById,
 };
-exports.default = depensesCtrl;
+exports.default = detailPiecesCtrl;

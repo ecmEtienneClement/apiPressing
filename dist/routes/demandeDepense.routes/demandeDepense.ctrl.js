@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getDemandeDepenseModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Demande_depense;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.dmdDepense);
 };
 const messageDemandeDepenseNotFound = "Cette demande de dépense n'éxiste pas.";
 //TODO CREATE DEMANDE_DEPENSE
 const createDemandeDepense = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataDemandeDepense = yield getDemandeDepenseModel().create(Object.assign({}, req.body));
+        const dataDemandeDepense = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataDemandeDepense);
     }
     catch (error) {
@@ -33,7 +34,11 @@ const createDemandeDepense = (req, res) => __awaiter(void 0, void 0, void 0, fun
 //TODO GET ALL DEMANDE_DEPENSES
 const getAllDemandeDepenses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataDemandeDepenses = yield getDemandeDepenseModel().findAll();
+        //
+        const dataDemandeDepenses = yield getModels().findAll({
+            include: { all: true },
+        });
+        //
         return res.json(dataDemandeDepenses);
     }
     catch (error) {
@@ -42,12 +47,21 @@ const getAllDemandeDepenses = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 //TODO GET DEMANDE_DEPENSE BY ID
 const getDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataDemandeDepense = yield getDemandeDepenseModel().findByPk(id);
-        return dataDemandeDepense
-            ? res.json(dataDemandeDepense)
-            : res.json({ message: messageDemandeDepenseNotFound });
+        const id = routes_helper_1.default.getParamId(req);
+        //
+        const dataDemandeDepense = yield getModels().findByPk(id, {
+            include: { all: true },
+        });
+        //
+        if (!dataDemandeDepense) {
+            return res.status(404).json({ message: messageDemandeDepenseNotFound });
+        }
+        //vrf OWNER
+        const employerOwnerDmdDepense = dataDemandeDepense.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerDmdDepense, true);
+        //
+        return res.json(dataDemandeDepense);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
@@ -55,12 +69,16 @@ const getDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 //TODO UPDATE DEMANDE_DEPENSE BY ID
 const updateDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataDemandeDepense = yield getDemandeDepenseModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataDemandeDepense = yield getModels().findByPk(id);
         if (!dataDemandeDepense) {
-            return res.json({ message: messageDemandeDepenseNotFound });
+            return res.status(404).json({ message: messageDemandeDepenseNotFound });
         }
+        //vrf OWNER
+        const employerOwnerDmdDepense = dataDemandeDepense.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerDmdDepense, false);
+        //
         const DemandeDepenseUpdated = yield dataDemandeDepense.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(DemandeDepenseUpdated);
     }
@@ -70,12 +88,16 @@ const updateDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0,
 });
 //TODO DELETE DEMANDE_DEPENSE BY ID
 const deleteDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataDemandeDepense = yield getDemandeDepenseModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataDemandeDepense = yield getModels().findByPk(id);
         if (!dataDemandeDepense) {
-            return res.json({ message: messageDemandeDepenseNotFound });
+            return res.status(404).json({ message: messageDemandeDepenseNotFound });
         }
+        //vrf OWNER
+        const employerOwnerDmdDepense = dataDemandeDepense.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerDmdDepense, false);
+        //
         yield dataDemandeDepense.destroy();
         return res.json({ deleted: true });
     }
@@ -86,7 +108,7 @@ const deleteDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0,
 //TODO DELETE ALL DEMANDE_DEPENSES
 const deleteAllDemandeDepenses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getDemandeDepenseModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

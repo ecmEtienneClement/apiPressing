@@ -2,7 +2,10 @@ import { Request } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { env } from "process";
+import ConnexionBd from "../connexionBd/connexionBd";
 const roundSalt = 10;
+
+/**********************************HELPER FUNCTIONS************************************* */
 //TODO GET PARAM ID
 const getParamId = (req: Request): string | null => {
   const id = req.params.id;
@@ -26,8 +29,10 @@ const getParamEmail = (req: Request): string | null => {
 //TODO VRF USEROWNER
 const vrfUserOwner = async (
   req: Request,
-  idUserOwnerRessouce: string
+  idUserOwnerRessouce: string,
+  authorizationAdmin: boolean
 ): Promise<void> => {
+  /*
   const token = req.headers.authorization.split(" ")[1];
   const tokenVerify: any = jwt.verify(token, env.SECRET_KEY, {
     audience: "MOBILE APP",
@@ -38,14 +43,25 @@ const vrfUserOwner = async (
   const userIdToken = tokenVerify.userIdAuth;
   const userRoleToken = tokenVerify.userRoleAuth;
 
-  //  TRAITEMENT EMAIL
-  if (userIdToken != idUserOwnerRessouce && userRoleToken != "admin") {
-    const errorUserOwner = new Error();
-    errorUserOwner.name = "Forbidden";
-    errorUserOwner.message =
-      "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
-    throw errorUserOwner;
+  //  TRAITEMENT VRF SI ADMIN EST AUTORISER A EFFECTUER CETTE ACTION
+  if (authorizationAdmin) {
+    if (userIdToken != idUserOwnerRessouce && userRoleToken != "admin") {
+      const errorUserOwner = new Error();
+      errorUserOwner.name = "Forbidden";
+      errorUserOwner.message =
+        "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+      throw errorUserOwner;
+    }
+  } else {
+    if (userIdToken != idUserOwnerRessouce) {
+      const errorUserOwner = new Error();
+      errorUserOwner.name = "Forbidden";
+      errorUserOwner.message =
+        "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+      throw errorUserOwner;
+    }
   }
+  */
 };
 //TODO VRF EMAIL ADMIN
 const vrfEmailAdmin = async (req: Request): Promise<void> => {
@@ -117,6 +133,8 @@ const pwdIsValid = (pwd: string): boolean => {
     return true;
   }
 };
+
+/**********************************HELPER EXPORTED************************************* */
 
 //TODO
 //DATA ROUTE HELPER EXPORT

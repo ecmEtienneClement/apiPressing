@@ -20,7 +20,6 @@ const demandeDepense_model_1 = __importDefault(require("./demandeDepense.model")
 const depense_model_1 = __importDefault(require("./depense.model"));
 const detailPiece_model_1 = __importDefault(require("./detailPiece.model"));
 const detailTypeKilo_model_1 = __importDefault(require("./detailTypeKilo.model"));
-const detailTypePiece_model_1 = __importDefault(require("./detailTypePiece.model"));
 const employe_model_1 = __importDefault(require("./employe.model"));
 const etatFinancier_model_1 = __importDefault(require("./etatFinancier.model"));
 const facture_model_1 = __importDefault(require("./facture.model"));
@@ -38,7 +37,6 @@ exports.default = (sequelize) => __awaiter(void 0, void 0, void 0, function* () 
         (0, depense_model_1.default)(sequelize, sequelize_1.DataTypes),
         (0, detailPiece_model_1.default)(sequelize, sequelize_1.DataTypes),
         (0, detailTypeKilo_model_1.default)(sequelize, sequelize_1.DataTypes),
-        (0, detailTypePiece_model_1.default)(sequelize, sequelize_1.DataTypes),
         (0, employe_model_1.default)(sequelize, sequelize_1.DataTypes),
         (0, etatFinancier_model_1.default)(sequelize, sequelize_1.DataTypes),
         (0, facture_model_1.default)(sequelize, sequelize_1.DataTypes),
@@ -69,9 +67,13 @@ function setRelationsModels(sequelize) {
         const typeLingeModel = sequelize.models.Type_linge;
         const detailTypeKiloModel = sequelize.models.Detail_type_kilo;
         const detailTypePieceModel = sequelize.models.Detail_type_piece;
-        const detailPieceModel = sequelize.models.Detail_piece;
         try {
             //TODO RELATION ADMIN
+            //ADMIN  <== EMPLOYER
+            adminModel.hasMany(employerModel, {
+                foreignKey: { allowNull: false },
+            });
+            employerModel.belongsTo(adminModel);
             //ADMIN  <== FACTURE
             adminModel.hasMany(factureModel, {
                 foreignKey: { allowNull: false },
@@ -79,12 +81,12 @@ function setRelationsModels(sequelize) {
             factureModel.belongsTo(adminModel);
             //ADMIN  <== COMPTE_BLOQUER
             adminModel.hasMany(compteBloquerModel, {
-                foreignKey: { allowNull: false },
+                foreignKey: { allowNull: true },
             });
             compteBloquerModel.belongsTo(adminModel);
             //ADMIN  <== DEMANDE_DEPENSE
             adminModel.hasMany(demandeDepenseModel, {
-                foreignKey: { allowNull: false },
+                foreignKey: { allowNull: true },
             });
             demandeDepenseModel.belongsTo(adminModel);
             //TODO RELATION EMPLOYER
@@ -126,24 +128,16 @@ function setRelationsModels(sequelize) {
                 foreignKey: { allowNull: false },
             });
             lingeModel.belongsTo(typeLingeModel);
-            //TODO RELATION DETAIL_TYPE_KILO
-            //DETAIL_TYPE_KILO  <== LINGE
-            detailTypeKiloModel.hasOne(lingeModel, {
-                foreignKey: { allowNull: true },
-            });
-            lingeModel.belongsTo(detailTypeKiloModel);
-            //TODO RELATION DETAIL_TYPE_PIECE
-            //DETAIL_TYPE_PIECE  <== LINGE
-            detailTypePieceModel.hasOne(lingeModel, {
-                foreignKey: { allowNull: true },
-            });
-            lingeModel.belongsTo(detailTypePieceModel);
-            //TODO RELATION DETAIL_PIECE
-            //DETAIL_PIECE  <== DETAIL_TYPE_PIECE
-            detailTypePieceModel.hasMany(detailPieceModel, {
+            //DETAIL_TYPE_KILO  ==> LINGE
+            lingeModel.hasOne(detailTypeKiloModel, {
                 foreignKey: { allowNull: false },
             });
-            detailPieceModel.belongsTo(detailTypePieceModel);
+            detailTypeKiloModel.belongsTo(lingeModel);
+            //DETAIL_TYPE_PIECE  ==> LINGE
+            lingeModel.hasMany(detailTypePieceModel, {
+                foreignKey: { allowNull: false },
+            });
+            detailTypePieceModel.belongsTo(lingeModel);
             return true;
         }
         catch (error) {

@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getDepenseModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Depense;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.depense);
 };
 const messageDepenseNotFound = "Cette dépense n'éxiste pas.";
 
 //TODO CREATE DEPENSE
 const createDepense = async (req: Request, res: Response) => {
   try {
-    const dataDepense = await getDepenseModel().create({
+    const dataDepense = await getModels().create({
       ...req.body,
     });
     return res.status(201).json(dataDepense);
@@ -24,7 +25,11 @@ const createDepense = async (req: Request, res: Response) => {
 //TODO GET ALL DEPENSES
 const getAllDepenses = async (req: Request, res: Response) => {
   try {
-    const dataDepenses = await getDepenseModel().findAll();
+    //
+    const dataDepenses = await getModels().findAll({
+      include: { all: true },
+    });
+    //
     return res.json(dataDepenses);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -33,11 +38,12 @@ const getAllDepenses = async (req: Request, res: Response) => {
 
 //TODO DELETE DEPENSE BY ID
 const deleteDepenseById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataDepense = await getDepenseModel().findByPk(id);
+    const id = routesHelpers.getParamId(req);
+
+    const dataDepense = await getModels().findByPk(id);
     if (!dataDepense) {
-      return res.json({ message: messageDepenseNotFound });
+      return res.status(404).json({ message: messageDepenseNotFound });
     }
 
     await dataDepense.destroy();
@@ -50,7 +56,7 @@ const deleteDepenseById = async (req: Request, res: Response) => {
 //TODO DELETE ALL DEPENSES
 const deleteAllDepenses = async (req: Request, res: Response) => {
   try {
-    await getDepenseModel().drop();
+    await getModels().drop();
     return res.json({ deleted: true });
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);

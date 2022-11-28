@@ -10,20 +10,7 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
     },
     //TODO
     nom: {
-      type: dataTypes.ENUM(
-        "Chemise",
-        "Combinaison",
-        "Gilet",
-        "Jeans",
-        "Jupe",
-        "Joggin",
-        "Pull",
-        "Tee-shirt",
-        "Veste",
-        "Robe",
-        "Manteau",
-        "Blouse"
-      ),
+      type: dataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: { msg: "Le nom de la piéce ne peut étre vide." },

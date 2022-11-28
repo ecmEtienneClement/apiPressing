@@ -35,11 +35,3 @@ try {
 catch (error) {
     console.log(error);
 }
-//
-/*
-const server = http.createServer();
-server.on("request", app);
-server.listen(port, () => {
-  console.log(`Server at started on : ${port}`);
-});
-*/

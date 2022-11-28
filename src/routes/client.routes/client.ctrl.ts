@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getClientModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Client;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.client);
 };
 const messageClientNotFound = "Cet client n'éxiste pas.";
 
 //TODO CREATE CLIENT
 const createClient = async (req: Request, res: Response) => {
   try {
-    const dataClient = await getClientModel().create({ ...req.body });
+    const dataClient = await getModels().create({
+      ...req.body,
+    });
     return res.status(201).json(dataClient);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -22,7 +25,9 @@ const createClient = async (req: Request, res: Response) => {
 //TODO GET ALL CLIENTS
 const getAllClients = async (req: Request, res: Response) => {
   try {
-    const dataClients = await getClientModel().findAll();
+    const dataClients = await getModels().findAll({
+      include: { all: true },
+    });
     return res.json(dataClients);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -31,12 +36,16 @@ const getAllClients = async (req: Request, res: Response) => {
 
 //TODO GET CLIENT BY ID
 const getClientById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataClient = await getClientModel().findByPk(id);
+    const id = routesHelpers.getParamId(req);
+    //
+    const dataClient = await getModels().findByPk(id, {
+      include: { all: true },
+    });
+    //
     return dataClient
       ? res.json(dataClient)
-      : res.json({ message: messageClientNotFound });
+      : res.status(404).json({ message: messageClientNotFound });
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }
@@ -44,15 +53,16 @@ const getClientById = async (req: Request, res: Response) => {
 
 //TODO UPDATE CLIENT BY ID
 const updateClientById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataClient = await getClientModel().findByPk(id);
+    const id = routesHelpers.getParamId(req);
+
+    const dataClient = await getModels().findByPk(id);
     if (!dataClient) {
-      return res.json({ message: messageClientNotFound });
+      return res.status(404).json({ message: messageClientNotFound });
     }
     //
     const employerOwnerClient: string = dataClient.getDataValue("EmployeId");
-    routesHelpers.vrfUserOwner(req, employerOwnerClient);
+    routesHelpers.vrfUserOwner(req, employerOwnerClient, true);
     //
     const clientUpdated = await dataClient.update(
       { ...req.body },
@@ -66,15 +76,16 @@ const updateClientById = async (req: Request, res: Response) => {
 
 //TODO DELETE CLIENT BY ID
 const deleteClientById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataClient = await getClientModel().findByPk(id);
+    const id = routesHelpers.getParamId(req);
+
+    const dataClient = await getModels().findByPk(id);
     if (!dataClient) {
-      return res.json({ message: messageClientNotFound });
+      return res.status(404).json({ message: messageClientNotFound });
     }
     //vrf OWNER
     const employerOwnerClient: string = dataClient.getDataValue("EmployeId");
-    routesHelpers.vrfUserOwner(req, employerOwnerClient);
+    routesHelpers.vrfUserOwner(req, employerOwnerClient, true);
     //
     await dataClient.destroy();
     return res.json({ deleted: true });
@@ -86,7 +97,7 @@ const deleteClientById = async (req: Request, res: Response) => {
 //TODO DELETE ALL CLIENTS
 const deleteAllClients = async (req: Request, res: Response) => {
   try {
-    await getClientModel().drop();
+    await getModels().drop();
     return res.json({ deleted: true });
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);

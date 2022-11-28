@@ -9,6 +9,7 @@ const detailTypePiece_ctrl_1 = __importDefault(require("./detailTypePiece.ctrl")
 const detailTypePiecesRoutes = (0, express_1.Router)();
 //
 detailTypePiecesRoutes.post("/", role_employer_authorization_1.default, detailTypePiece_ctrl_1.default.createDetailTypePiece);
+detailTypePiecesRoutes.get("/:id", role_employer_authorization_1.default, detailTypePiece_ctrl_1.default.getDetailTypePieceById);
 detailTypePiecesRoutes.delete("/:id", detailTypePiece_ctrl_1.default.deleteDetailTypePieceById);
 //
 exports.default = detailTypePiecesRoutes;

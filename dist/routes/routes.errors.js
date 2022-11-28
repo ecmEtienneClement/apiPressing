@@ -13,7 +13,8 @@ const traitementErrorsReq = (error, res) => {
     else if (error.name === "NotFoundPwd" ||
         error.name === "InvalidePwd" ||
         error.name === "NotFoundEmail" ||
-        error.name === "InvalidEmail") {
+        error.name === "InvalidEmail" ||
+        error.name === "Forbidden") {
         res.status(400).json({
             message: error.message,
         });

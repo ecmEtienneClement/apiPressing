@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getDetailTypeKiloModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Detail_type_kilo;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.detailTypeKilo);
 };
 const messageDetailTypeKiloNotFound = "Ce détail de type kilo n'éxiste pas.";
 //TODO CREATE DETAIL_TYPE_KILO
 const createDetailTypeKilo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataDetailTypeKiloModel = yield getDetailTypeKiloModel().create(Object.assign({}, req.body));
+        const dataDetailTypeKiloModel = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataDetailTypeKiloModel);
     }
     catch (error) {
@@ -34,9 +35,9 @@ const createDetailTypeKilo = (req, res) => __awaiter(void 0, void 0, void 0, fun
 const updateDetailTypeKiloById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataDetailTypeKiloModel = yield getDetailTypeKiloModel().findByPk(id);
+        const dataDetailTypeKiloModel = yield getModels().findByPk(id);
         if (!dataDetailTypeKiloModel) {
-            return res.json({ message: messageDetailTypeKiloNotFound });
+            return res.status(404).json({ message: messageDetailTypeKiloNotFound });
         }
         const detailTypeKiloUpdated = yield dataDetailTypeKiloModel.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(detailTypeKiloUpdated);
@@ -48,7 +49,7 @@ const updateDetailTypeKiloById = (req, res) => __awaiter(void 0, void 0, void 0,
 //TODO DELETE  DETAIL_TYPE_KILO
 const deleteDetailTypeKilo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getDetailTypeKiloModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getFactureModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Facture;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.facture);
 };
 const messageFactureNotFound = "Cette facture n'éxiste pas.";
 //TODO CREATE FACTURE
 const createFacture = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataFacture = yield getFactureModel().create(Object.assign({}, req.body));
+        const dataFacture = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataFacture);
     }
     catch (error) {
@@ -33,7 +34,11 @@ const createFacture = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 //TODO GET ALL FACTURES
 const getAllFactures = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataFactures = yield getFactureModel().findAll();
+        //
+        const dataFactures = yield getModels().findAll({
+            include: { all: true },
+        });
+        //
         return res.json(dataFactures);
     }
     catch (error) {
@@ -42,12 +47,16 @@ const getAllFactures = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 //TODO GET FACTURE BY ID
 const getFactureById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataFacture = yield getFactureModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        //
+        const dataFacture = yield getModels().findByPk(id, {
+            include: { all: true },
+        });
+        //
         return dataFacture
             ? res.json(dataFacture)
-            : res.json({ message: messageFactureNotFound });
+            : res.status(404).json({ message: messageFactureNotFound });
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
@@ -57,9 +66,9 @@ const getFactureById = (req, res) => __awaiter(void 0, void 0, void 0, function*
 const updateFactureById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataFacture = yield getFactureModel().findByPk(id);
+        const dataFacture = yield getModels().findByPk(id);
         if (!dataFacture) {
-            return res.json({ message: messageFactureNotFound });
+            return res.status(404).json({ message: messageFactureNotFound });
         }
         const factureUpdated = yield dataFacture.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(factureUpdated);
@@ -72,9 +81,9 @@ const updateFactureById = (req, res) => __awaiter(void 0, void 0, void 0, functi
 const deleteFactureById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataFacture = yield getFactureModel().findByPk(id);
+        const dataFacture = yield getModels().findByPk(id);
         if (!dataFacture) {
-            return res.json({ message: messageFactureNotFound });
+            return res.status(404).json({ message: messageFactureNotFound });
         }
         yield dataFacture.destroy();
         return res.json({ deleted: true });
@@ -86,7 +95,7 @@ const deleteFactureById = (req, res) => __awaiter(void 0, void 0, void 0, functi
 //TODO DELETE ALL FACTURES
 const deleteAllFactures = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getFactureModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

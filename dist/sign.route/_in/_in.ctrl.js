@@ -18,13 +18,11 @@ const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const process_1 = require("process");
 const routes_errors_1 = __importDefault(require("../../routes/routes.errors"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 dotenv_1.default.config();
 //
-const getEmployerModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Employe;
-};
-const getAdminModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Admin;
+const getModels = (nameModel) => {
+    return connexionBd_1.default.modelsList.get(nameModel);
 };
 const messageAdminNotFound = "Cet administrateur n'éxiste pas.";
 const messageEmployerNotFound = "Cet employé n'éxiste pas.";
@@ -35,7 +33,9 @@ exports.default = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const pwd = req.body.mdp;
     const isAdmin = email.startsWith("#");
     //
-    const modelAdminOrEmployer = isAdmin ? getAdminModel() : getEmployerModel();
+    const modelAdminOrEmployer = isAdmin
+        ? getModels(namingModelListe_1.NameModelsListe.admin)
+        : getModels(namingModelListe_1.NameModelsListe.employer);
     const messageUserNotFound = isAdmin
         ? messageAdminNotFound
         : messageEmployerNotFound;
@@ -52,7 +52,9 @@ exports.default = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const isGood = yield bcrypt_1.default.compare(pwd, dataEmployerOrAdmin.getDataValue("mdp"));
         //
         if (!isGood) {
-            return res.json({ message: "Email ou mot de passe incorrect" });
+            return res
+                .status(403)
+                .json({ message: "Email ou mot de passe incorrect" });
         }
         const userIdAuth = dataEmployerOrAdmin.getDataValue("id");
         const userEmailAuth = dataEmployerOrAdmin.getDataValue("email");

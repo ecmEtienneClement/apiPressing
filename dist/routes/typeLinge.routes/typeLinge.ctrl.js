@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getTypeLingeModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Type_linge;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.typeLinge);
 };
 const messageTypeLingeNotFound = "Ce type de linge n'éxiste pas.";
 //TODO CREATE TYPE_LINGE
 const createTypeLinge = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataTypeLinge = yield getTypeLingeModel().create(Object.assign({}, req.body));
+        const dataTypeLinge = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataTypeLinge);
     }
     catch (error) {
@@ -33,7 +34,7 @@ const createTypeLinge = (req, res) => __awaiter(void 0, void 0, void 0, function
 //TODO GET TYPE_LINGE
 const getTypeLinge = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataTypeLinge = yield getTypeLingeModel().findAll({ limit: 1 });
+        const dataTypeLinge = yield getModels().findAll();
         return res.json(dataTypeLinge);
     }
     catch (error) {
@@ -44,9 +45,9 @@ const getTypeLinge = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 const updateTypeLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataTypeLinge = yield getTypeLingeModel().findByPk(id);
+        const dataTypeLinge = yield getModels().findByPk(id);
         if (!dataTypeLinge) {
-            return res.json({ message: messageTypeLingeNotFound });
+            return res.status(404).json({ message: messageTypeLingeNotFound });
         }
         const typeLingeUpdated = yield dataTypeLinge.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(typeLingeUpdated);
@@ -59,7 +60,7 @@ const updateTypeLingeById = (req, res) => __awaiter(void 0, void 0, void 0, func
 const deleteTypeLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataTypeLinge = yield getTypeLingeModel().findByPk(id);
+        const dataTypeLinge = yield getModels().findByPk(id);
         if (!dataTypeLinge) {
             return res.json({ message: messageTypeLingeNotFound });
         }

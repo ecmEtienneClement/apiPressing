@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getDetailTypeKiloModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Detail_type_kilo;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.detailTypeKilo);
 };
 const messageDetailTypeKiloNotFound = "Ce détail de type kilo n'éxiste pas.";
 
 //TODO CREATE DETAIL_TYPE_KILO
 const createDetailTypeKilo = async (req: Request, res: Response) => {
   try {
-    const dataDetailTypeKiloModel = await getDetailTypeKiloModel().create({
+    const dataDetailTypeKiloModel = await getModels().create({
       ...req.body,
     });
     return res.status(201).json(dataDetailTypeKiloModel);
@@ -25,9 +26,9 @@ const createDetailTypeKilo = async (req: Request, res: Response) => {
 const updateDetailTypeKiloById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataDetailTypeKiloModel = await getDetailTypeKiloModel().findByPk(id);
+    const dataDetailTypeKiloModel = await getModels().findByPk(id);
     if (!dataDetailTypeKiloModel) {
-      return res.json({ message: messageDetailTypeKiloNotFound });
+      return res.status(404).json({ message: messageDetailTypeKiloNotFound });
     }
 
     const detailTypeKiloUpdated = await dataDetailTypeKiloModel.update(
@@ -43,7 +44,7 @@ const updateDetailTypeKiloById = async (req: Request, res: Response) => {
 //TODO DELETE  DETAIL_TYPE_KILO
 const deleteDetailTypeKilo = async (req: Request, res: Response) => {
   try {
-    await getDetailTypeKiloModel().drop();
+    await getModels().drop();
     return res.json({ deleted: true });
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);

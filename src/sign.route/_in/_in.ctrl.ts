@@ -5,13 +5,11 @@ import ConnexionBd from "../../connexionBd/connexionBd";
 import dotenv from "dotenv";
 import { env } from "process";
 import routesErrors from "../../routes/routes.errors";
+import { NameModelsListe } from "../../models/namingModelListe";
 dotenv.config();
 //
-const getEmployerModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Employe;
-};
-const getAdminModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Admin;
+const getModels = (nameModel: NameModelsListe) => {
+  return ConnexionBd.modelsList.get(nameModel);
 };
 
 const messageAdminNotFound = "Cet administrateur n'éxiste pas.";
@@ -24,7 +22,9 @@ export default async (req: Request, res: Response) => {
   const pwd: string = req.body.mdp;
   const isAdmin = email.startsWith("#");
   //
-  const modelAdminOrEmployer = isAdmin ? getAdminModel() : getEmployerModel();
+  const modelAdminOrEmployer = isAdmin
+    ? getModels(NameModelsListe.admin)
+    : getModels(NameModelsListe.employer);
   const messageUserNotFound = isAdmin
     ? messageAdminNotFound
     : messageEmployerNotFound;
@@ -44,7 +44,9 @@ export default async (req: Request, res: Response) => {
     );
     //
     if (!isGood) {
-      return res.json({ message: "Email ou mot de passe incorrect" });
+      return res
+        .status(403)
+        .json({ message: "Email ou mot de passe incorrect" });
     }
 
     const userIdAuth = dataEmployerOrAdmin.getDataValue("id");

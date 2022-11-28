@@ -36,7 +36,7 @@ const updateDetailPieceById = (req, res) => __awaiter(void 0, void 0, void 0, fu
     try {
         const dataDetailPieceModel = yield getDetailPieceModel().findByPk(id);
         if (!dataDetailPieceModel) {
-            return res.json({ message: messageDetailPieceNotFound });
+            return res.status(404).json({ message: messageDetailPieceNotFound });
         }
         const detailPieceUpdated = yield dataDetailPieceModel.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(detailPieceUpdated);
@@ -51,7 +51,7 @@ const deleteDetailPieceById = (req, res) => __awaiter(void 0, void 0, void 0, fu
     try {
         const dataDetailPieceModel = yield getDetailPieceModel().findByPk(id);
         if (!dataDetailPieceModel) {
-            return res.json({ message: messageDetailPieceNotFound });
+            return res.status(404).json({ message: messageDetailPieceNotFound });
         }
         yield dataDetailPieceModel.destroy();
         return res.json({ deleted: true });

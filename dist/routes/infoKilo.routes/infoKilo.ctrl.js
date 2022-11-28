@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getInfoKiloModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Info_kilo;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.infoKilo);
 };
 const messageInfoKiloNotFound = "Cet info sur le kilo n'éxiste pas.";
 //TODO CREATE INFO_KILO
 const createInfoKilo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataInfoKilo = yield getInfoKiloModel().create(Object.assign({}, req.body));
+        const dataInfoKilo = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataInfoKilo);
     }
     catch (error) {
@@ -33,7 +34,9 @@ const createInfoKilo = (req, res) => __awaiter(void 0, void 0, void 0, function*
 //TODO GET INFO_KILO
 const getInfoKilo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataInfoKilo = yield getInfoKiloModel().findAll({ limit: 1 });
+        const dataInfoKilo = yield getModels().findAll({
+            limit: 1,
+        });
         return res.json(dataInfoKilo);
     }
     catch (error) {
@@ -44,9 +47,9 @@ const getInfoKilo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 const updateInfoKiloById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataInfoKilo = yield getInfoKiloModel().findByPk(id);
+        const dataInfoKilo = yield getModels().findByPk(id);
         if (!dataInfoKilo) {
-            return res.json({ message: messageInfoKiloNotFound });
+            return res.status(404).json({ message: messageInfoKiloNotFound });
         }
         const infoKiloUpdated = yield dataInfoKilo.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(infoKiloUpdated);
@@ -59,9 +62,9 @@ const updateInfoKiloById = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const deleteInfoKiloById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataInfoKilo = yield getInfoKiloModel().findByPk(id);
+        const dataInfoKilo = yield getModels().findByPk(id);
         if (!dataInfoKilo) {
-            return res.json({ message: messageInfoKiloNotFound });
+            return res.status(404).json({ message: messageInfoKiloNotFound });
         }
         yield dataInfoKilo.destroy();
         return res.json({ deleted: true });

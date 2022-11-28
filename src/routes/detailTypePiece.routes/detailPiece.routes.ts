@@ -7,13 +7,13 @@ const detailPiecesRoutes: Router = Router();
 detailPiecesRoutes.post(
   "/",
   roleEmployerAuthorization,
-  detailPiecesCtrl.createDetailPiece
+  detailPiecesCtrl.createDetailTypePiece
 );
 detailPiecesRoutes.put(
   "/:id",
   roleEmployerAuthorization,
-  detailPiecesCtrl.updateDetailPieceById
+  detailPiecesCtrl.updateDetailTypePieceById
 );
-detailPiecesRoutes.delete("/:id", detailPiecesCtrl.deleteDetailPieceById);
+detailPiecesRoutes.delete("/:id", detailPiecesCtrl.deleteDetailTypePieceById);
 //
 export default detailPiecesRoutes;

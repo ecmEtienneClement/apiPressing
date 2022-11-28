@@ -30,13 +30,28 @@ const createDetailTypePiece = (req, res) => __awaiter(void 0, void 0, void 0, fu
         routes_errors_1.default.traitementErrorsReq(error, res);
     }
 });
+//TODO GET DETAIL_TYPE_PIECE BY ID
+const getDetailTypePieceById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = routes_helper_1.default.getParamId(req);
+        const detailPiece = connexionBd_1.default.getSequelizeDb().models.Detail_piece;
+        const dataDetailTypePieceModel = yield getDetailTypePieceModel().findByPk(id, { include: [detailPiece] });
+        if (!dataDetailTypePieceModel) {
+            return res.status(404).json({ message: messageDetailTypePieceNotFound });
+        }
+        return res.json(dataDetailTypePieceModel);
+    }
+    catch (error) {
+        routes_errors_1.default.traitementErrorsReq(error, res);
+    }
+});
 //TODO DELETE DETAIL_TYPE_PIECE BY ID
 const deleteDetailTypePieceById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
+        const id = routes_helper_1.default.getParamId(req);
         const dataDetailTypePieceModel = yield getDetailTypePieceModel().findByPk(id);
         if (!dataDetailTypePieceModel) {
-            return res.json({ message: messageDetailTypePieceNotFound });
+            return res.status(404).json({ message: messageDetailTypePieceNotFound });
         }
         yield dataDetailTypePieceModel.destroy();
         return res.json({ deleted: true });
@@ -48,6 +63,7 @@ const deleteDetailTypePieceById = (req, res) => __awaiter(void 0, void 0, void 0
 //DATA ROUTES EXPORTED
 const detailTypePiecesCtrl = {
     createDetailTypePiece,
+    getDetailTypePieceById,
     deleteDetailTypePieceById,
 };
 exports.default = detailTypePiecesCtrl;

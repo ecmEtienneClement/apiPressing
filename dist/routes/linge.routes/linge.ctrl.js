@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getLingeModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Linge;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.linge);
 };
 const messageLingeNotFound = "Cet linge n'éxiste pas.";
 //TODO CREATE LINGE
 const createLinge = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataLinge = yield getLingeModel().create(Object.assign({}, req.body));
+        const dataLinge = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataLinge);
     }
     catch (error) {
@@ -33,7 +34,11 @@ const createLinge = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 //TODO GET ALL LINGES
 const getAllLinges = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataLinges = yield getLingeModel().findAll();
+        //
+        const dataLinges = yield getModels().findAll({
+            include: { all: true },
+        });
+        //
         return res.json(dataLinges);
     }
     catch (error) {
@@ -42,12 +47,18 @@ const getAllLinges = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 //TODO GET LINGE BY ID
 const getLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataLinge = yield getLingeModel().findByPk(id);
-        return dataLinge
-            ? res.json(dataLinge)
-            : res.json({ message: messageLingeNotFound });
+        const id = routes_helper_1.default.getParamId(req);
+        //
+        //
+        const dataLinge = yield getModels().findByPk(id, {
+            include: { all: true },
+        });
+        if (!dataLinge) {
+            return res.status(404).json({ message: messageLingeNotFound });
+        }
+        //
+        return res.json(dataLinge);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
@@ -55,12 +66,16 @@ const getLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 //TODO UPDATE LINGE BY ID
 const updateLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataLinge = yield getLingeModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataLinge = yield getModels().findByPk(id);
         if (!dataLinge) {
-            return res.json({ message: messageLingeNotFound });
+            return res.status(404).json({ message: messageLingeNotFound });
         }
+        //vrf OWNER
+        const employerOwnerLinge = dataLinge.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerLinge, true);
+        //
         const adminUpdated = yield dataLinge.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(adminUpdated);
     }
@@ -70,12 +85,16 @@ const updateLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 //TODO DELETE LINGE BY ID
 const deleteLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataLinge = yield getLingeModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataLinge = yield getModels().findByPk(id);
         if (!dataLinge) {
-            return res.json({ message: messageLingeNotFound });
+            return res.status(404).json({ message: messageLingeNotFound });
         }
+        //vrf OWNER
+        const employerOwnerLinge = dataLinge.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerLinge, true);
+        //
         yield dataLinge.destroy();
         return res.json({ deleted: true });
     }
@@ -86,7 +105,7 @@ const deleteLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function
 //TODO DELETE ALL LINGES
 const deleteAllLinges = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getLingeModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

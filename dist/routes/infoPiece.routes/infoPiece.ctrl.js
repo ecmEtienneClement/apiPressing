@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getInfoPieceModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Info_piece;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.infoPiece);
 };
 const messageInfoPieceNotFound = "Cet info sur le piece n'éxiste pas.";
 //TODO CREATE INFO_PIECE
 const createInfoPiece = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataInfoPiece = yield getInfoPieceModel().create(Object.assign({}, req.body));
+        const dataInfoPiece = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataInfoPiece);
     }
     catch (error) {
@@ -33,7 +34,7 @@ const createInfoPiece = (req, res) => __awaiter(void 0, void 0, void 0, function
 //TODO GET INFO_PIECE
 const getInfoPiece = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataInfoPiece = yield getInfoPieceModel().findAll({ limit: 1 });
+        const dataInfoPiece = yield getModels().findAll();
         return res.json(dataInfoPiece);
     }
     catch (error) {
@@ -44,9 +45,9 @@ const getInfoPiece = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 const updateInfoPieceById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataInfoPiece = yield getInfoPieceModel().findByPk(id);
+        const dataInfoPiece = yield getModels().findByPk(id);
         if (!dataInfoPiece) {
-            return res.json({ message: messageInfoPieceNotFound });
+            return res.status(404).json({ message: messageInfoPieceNotFound });
         }
         const infoPieceUpdated = yield dataInfoPiece.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(infoPieceUpdated);
@@ -59,9 +60,9 @@ const updateInfoPieceById = (req, res) => __awaiter(void 0, void 0, void 0, func
 const deleteInfoPieceById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataInfoPiece = yield getInfoPieceModel().findByPk(id);
+        const dataInfoPiece = yield getModels().findByPk(id);
         if (!dataInfoPiece) {
-            return res.json({ message: messageInfoPieceNotFound });
+            return res.status(404).json({ message: messageInfoPieceNotFound });
         }
         yield dataInfoPiece.destroy();
         return res.json({ deleted: true });

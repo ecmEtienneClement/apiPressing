@@ -4,9 +4,8 @@ import clientModel from "./client.model";
 import compteBloqueModel from "./compteBloque.model";
 import demandeDepenseModel from "./demandeDepense.model";
 import depenseModel from "./depense.model";
-import detailPieceModel from "./detailPiece.model";
+import detailTypePieceModel from "./detailPiece.model";
 import detailTypeKiloModel from "./detailTypeKilo.model";
-import detailTypePieceModel from "./detailTypePiece.model";
 import employeModel from "./employe.model";
 import etatFinancierModel from "./etatFinancier.model";
 import factureModel from "./facture.model";
@@ -23,9 +22,8 @@ export default async (sequelize: Sequelize) => {
     compteBloqueModel(sequelize, DataTypes),
     demandeDepenseModel(sequelize, DataTypes),
     depenseModel(sequelize, DataTypes),
-    detailPieceModel(sequelize, DataTypes),
-    detailTypeKiloModel(sequelize, DataTypes),
     detailTypePieceModel(sequelize, DataTypes),
+    detailTypeKiloModel(sequelize, DataTypes),
     employeModel(sequelize, DataTypes),
     etatFinancierModel(sequelize, DataTypes),
     factureModel(sequelize, DataTypes),
@@ -55,9 +53,14 @@ async function setRelationsModels(sequelize: Sequelize): Promise<boolean> {
   const typeLingeModel = sequelize.models.Type_linge;
   const detailTypeKiloModel = sequelize.models.Detail_type_kilo;
   const detailTypePieceModel = sequelize.models.Detail_type_piece;
-  const detailPieceModel = sequelize.models.Detail_piece;
+
   try {
     //TODO RELATION ADMIN
+    //ADMIN  <== EMPLOYER
+    adminModel.hasMany(employerModel, {
+      foreignKey: { allowNull: false },
+    });
+    employerModel.belongsTo(adminModel);
     //ADMIN  <== FACTURE
     adminModel.hasMany(factureModel, {
       foreignKey: { allowNull: false },
@@ -65,7 +68,7 @@ async function setRelationsModels(sequelize: Sequelize): Promise<boolean> {
     factureModel.belongsTo(adminModel);
     //ADMIN  <== COMPTE_BLOQUER
     adminModel.hasMany(compteBloquerModel, {
-      foreignKey: { allowNull: false },
+      foreignKey: { allowNull: true },
     });
     compteBloquerModel.belongsTo(adminModel);
     //ADMIN  <== DEMANDE_DEPENSE
@@ -117,26 +120,18 @@ async function setRelationsModels(sequelize: Sequelize): Promise<boolean> {
     });
     lingeModel.belongsTo(typeLingeModel);
 
-    //TODO RELATION DETAIL_TYPE_KILO
-    //DETAIL_TYPE_KILO  <== LINGE
-    detailTypeKiloModel.hasOne(lingeModel, {
-      foreignKey: { allowNull: true },
-    });
-    lingeModel.belongsTo(detailTypeKiloModel);
-
-    //TODO RELATION DETAIL_TYPE_PIECE
-    //DETAIL_TYPE_PIECE  <== LINGE
-    detailTypePieceModel.hasOne(lingeModel, {
-      foreignKey: { allowNull: true },
-    });
-    lingeModel.belongsTo(detailTypePieceModel);
-
-    //TODO RELATION DETAIL_PIECE
-    //DETAIL_PIECE  <== DETAIL_TYPE_PIECE
-    detailTypePieceModel.hasMany(detailPieceModel, {
+    //DETAIL_TYPE_KILO  ==> LINGE
+    lingeModel.hasOne(detailTypeKiloModel, {
       foreignKey: { allowNull: false },
     });
-    detailPieceModel.belongsTo(detailTypePieceModel);
+    detailTypeKiloModel.belongsTo(lingeModel);
+
+    //DETAIL_TYPE_PIECE  ==> LINGE
+    lingeModel.hasMany(detailTypePieceModel, {
+      foreignKey: { allowNull: false },
+    });
+    detailTypePieceModel.belongsTo(lingeModel);
+
     return true;
   } catch (error) {
     console.log(

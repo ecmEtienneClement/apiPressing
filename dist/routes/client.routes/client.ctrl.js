@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getClientModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Client;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.client);
 };
 const messageClientNotFound = "Cet client n'éxiste pas.";
 //TODO CREATE CLIENT
 const createClient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataClient = yield getClientModel().create(Object.assign({}, req.body));
+        const dataClient = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataClient);
     }
     catch (error) {
@@ -33,7 +34,9 @@ const createClient = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 //TODO GET ALL CLIENTS
 const getAllClients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataClients = yield getClientModel().findAll();
+        const dataClients = yield getModels().findAll({
+            include: { all: true },
+        });
         return res.json(dataClients);
     }
     catch (error) {
@@ -42,12 +45,16 @@ const getAllClients = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 //TODO GET CLIENT BY ID
 const getClientById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataClient = yield getClientModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        //
+        const dataClient = yield getModels().findByPk(id, {
+            include: { all: true },
+        });
+        //
         return dataClient
             ? res.json(dataClient)
-            : res.json({ message: messageClientNotFound });
+            : res.status(404).json({ message: messageClientNotFound });
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
@@ -55,12 +62,16 @@ const getClientById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 //TODO UPDATE CLIENT BY ID
 const updateClientById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataClient = yield getClientModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataClient = yield getModels().findByPk(id);
         if (!dataClient) {
-            return res.json({ message: messageClientNotFound });
+            return res.status(404).json({ message: messageClientNotFound });
         }
+        //
+        const employerOwnerClient = dataClient.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerClient, true);
+        //
         const clientUpdated = yield dataClient.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(clientUpdated);
     }
@@ -70,12 +81,16 @@ const updateClientById = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 //TODO DELETE CLIENT BY ID
 const deleteClientById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataClient = yield getClientModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataClient = yield getModels().findByPk(id);
         if (!dataClient) {
-            return res.json({ message: messageClientNotFound });
+            return res.status(404).json({ message: messageClientNotFound });
         }
+        //vrf OWNER
+        const employerOwnerClient = dataClient.getDataValue("EmployeId");
+        routes_helper_1.default.vrfUserOwner(req, employerOwnerClient, true);
+        //
         yield dataClient.destroy();
         return res.json({ deleted: true });
     }
@@ -86,7 +101,7 @@ const deleteClientById = (req, res) => __awaiter(void 0, void 0, void 0, functio
 //TODO DELETE ALL CLIENTS
 const deleteAllClients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getClientModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

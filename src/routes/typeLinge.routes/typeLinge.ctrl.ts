@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getTypeLingeModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Type_linge;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.typeLinge);
 };
 const messageTypeLingeNotFound = "Ce type de linge n'éxiste pas.";
 
 //TODO CREATE TYPE_LINGE
 const createTypeLinge = async (req: Request, res: Response) => {
   try {
-    const dataTypeLinge = await getTypeLingeModel().create({ ...req.body });
+    const dataTypeLinge = await getModels().create({
+      ...req.body,
+    });
     return res.status(201).json(dataTypeLinge);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -22,7 +25,7 @@ const createTypeLinge = async (req: Request, res: Response) => {
 //TODO GET TYPE_LINGE
 const getTypeLinge = async (req: Request, res: Response) => {
   try {
-    const dataTypeLinge = await getTypeLingeModel().findAll({ limit: 1 });
+    const dataTypeLinge = await getModels().findAll();
     return res.json(dataTypeLinge);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -33,9 +36,9 @@ const getTypeLinge = async (req: Request, res: Response) => {
 const updateTypeLingeById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataTypeLinge = await getTypeLingeModel().findByPk(id);
+    const dataTypeLinge = await getModels().findByPk(id);
     if (!dataTypeLinge) {
-      return res.json({ message: messageTypeLingeNotFound });
+      return res.status(404).json({ message: messageTypeLingeNotFound });
     }
 
     const typeLingeUpdated = await dataTypeLinge.update(
@@ -52,7 +55,7 @@ const updateTypeLingeById = async (req: Request, res: Response) => {
 const deleteTypeLingeById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataTypeLinge = await getTypeLingeModel().findByPk(id);
+    const dataTypeLinge = await getModels().findByPk(id);
     if (!dataTypeLinge) {
       return res.json({ message: messageTypeLingeNotFound });
     }

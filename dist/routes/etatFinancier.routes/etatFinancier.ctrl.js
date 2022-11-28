@@ -13,17 +13,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getEtatFinancierModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Etat_financier;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.etatFinancier);
 };
 const messageEtatFinancierNotFound = "Cet état financier n'éxiste pas.";
 //TODO CREATE ETAT_FINANCIER
 const createEtatFinancier = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataEtatFinancierModel = yield getEtatFinancierModel().create(Object.assign({}, req.body));
+        const dataEtatFinancierModel = yield getModels().create(Object.assign({}, req.body));
         return res.status(201).json(dataEtatFinancierModel);
     }
     catch (error) {
@@ -33,7 +34,7 @@ const createEtatFinancier = (req, res) => __awaiter(void 0, void 0, void 0, func
 //TODO GET ETAT_FINANCIER
 const getEtatFinancier = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataEtatFinancierModel = yield getEtatFinancierModel().findAll({
+        const dataEtatFinancierModel = yield getModels().findAll({
             limit: 1,
         });
         return res.json(dataEtatFinancierModel);
@@ -46,9 +47,9 @@ const getEtatFinancier = (req, res) => __awaiter(void 0, void 0, void 0, functio
 const updateEtatFinancierById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataEtatFinancierModel = yield getEtatFinancierModel().findByPk(id);
+        const dataEtatFinancierModel = yield getModels().findByPk(id);
         if (!dataEtatFinancierModel) {
-            return res.json({ message: messageEtatFinancierNotFound });
+            return res.status(404).json({ message: messageEtatFinancierNotFound });
         }
         const etatFinancierUpdated = yield dataEtatFinancierModel.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(etatFinancierUpdated);
@@ -60,7 +61,7 @@ const updateEtatFinancierById = (req, res) => __awaiter(void 0, void 0, void 0, 
 //TODO DELETE  ETAT_FINANCIER
 const deleteEtatFinancier = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getEtatFinancierModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const roundSalt = 10;
+/**********************************HELPER FUNCTIONS************************************* */
 //TODO GET PARAM ID
 const getParamId = (req) => {
     const id = req.params.id;
@@ -32,6 +33,39 @@ const getParamEmail = (req) => {
      */
     return email ? email : null;
 };
+//TODO VRF USEROWNER
+const vrfUserOwner = (req, idUserOwnerRessouce, authorizationAdmin) => __awaiter(void 0, void 0, void 0, function* () {
+    /*
+    const token = req.headers.authorization.split(" ")[1];
+    const tokenVerify: any = jwt.verify(token, env.SECRET_KEY, {
+      audience: "MOBILE APP",
+      algorithms: ["HS384"],
+    });
+  
+    //INFO USER_TOKEN
+    const userIdToken = tokenVerify.userIdAuth;
+    const userRoleToken = tokenVerify.userRoleAuth;
+  
+    //  TRAITEMENT VRF SI ADMIN EST AUTORISER A EFFECTUER CETTE ACTION
+    if (authorizationAdmin) {
+      if (userIdToken != idUserOwnerRessouce && userRoleToken != "admin") {
+        const errorUserOwner = new Error();
+        errorUserOwner.name = "Forbidden";
+        errorUserOwner.message =
+          "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+        throw errorUserOwner;
+      }
+    } else {
+      if (userIdToken != idUserOwnerRessouce) {
+        const errorUserOwner = new Error();
+        errorUserOwner.name = "Forbidden";
+        errorUserOwner.message =
+          "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+        throw errorUserOwner;
+      }
+    }
+    */
+});
 //TODO VRF EMAIL ADMIN
 const vrfEmailAdmin = (req) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
@@ -98,6 +132,7 @@ const pwdIsValid = (pwd) => {
         return true;
     }
 };
+/**********************************HELPER EXPORTED************************************* */
 //TODO
 //DATA ROUTE HELPER EXPORT
 const routesHelpers = {
@@ -105,5 +140,6 @@ const routesHelpers = {
     getParamEmail,
     getHashPwd,
     vrfEmailAdmin,
+    vrfUserOwner,
 };
 exports.default = routesHelpers;

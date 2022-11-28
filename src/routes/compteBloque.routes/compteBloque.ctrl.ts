@@ -1,18 +1,19 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getCompteBloqueModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Compte_bloquer;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.cmpBloquer);
 };
 const messageCompteBloquerNotFound = "Cet [compte_bloquer] n'éxiste pas.";
 
 //TODO CREATE COMPTE_BLOQUER
 const createCompteBloquer = async (req: Request, res: Response) => {
   try {
-    const dataCompteBloquer = await getCompteBloqueModel().create({
+    const dataCompteBloquer = await getModels().create({
       ...req.body,
     });
     return res.status(201).json(dataCompteBloquer);
@@ -24,7 +25,11 @@ const createCompteBloquer = async (req: Request, res: Response) => {
 //TODO GET ALL COMPTE_BLOQUERS
 const getAllCompteBloquer = async (req: Request, res: Response) => {
   try {
-    const dataCompteBloquer = await getCompteBloqueModel().findAll();
+    //
+    const dataCompteBloquer = await getModels().findAll({
+      include: { all: true },
+    });
+    //
     return res.json(dataCompteBloquer);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -33,9 +38,10 @@ const getAllCompteBloquer = async (req: Request, res: Response) => {
 
 //TODO GET COMPTE_BLOQUER BY EMAIL
 const getCompteBloquerByEmail = async (req: Request, res: Response) => {
-  const email = routesHelpers.getParamEmail(req);
   try {
-    const dataCompteBloquer = await getCompteBloqueModel().findOne({
+    const email = routesHelpers.getParamEmail(req);
+
+    const dataCompteBloquer = await getModels().findOne({
       where: {
         email: email,
       },
@@ -62,11 +68,12 @@ const getCompteBloquerByEmail = async (req: Request, res: Response) => {
 
 //TODO DELETE COMPTE_BLOQUER BY ID
 const deleteCompteBloquerById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataCompteBloquer = await getCompteBloqueModel().findByPk(id);
+    const id = routesHelpers.getParamId(req);
+
+    const dataCompteBloquer = await getModels().findByPk(id);
     if (!dataCompteBloquer) {
-      return res.json({ message: messageCompteBloquerNotFound });
+      return res.status(404).json({ message: messageCompteBloquerNotFound });
     }
 
     await dataCompteBloquer.destroy();

@@ -1,0 +1,16 @@
+export enum NameModelsListe {
+  admin = "admin",
+  facture = "facture",
+  dmdDepense = "dmdDepense",
+  depense = "depense",
+  employer = "employer",
+  cmpBloquer = "cmpBloquer",
+  client = "client",
+  linge = "linge",
+  typeLinge = "typeLinge",
+  infoKilo = "infoKilo",
+  infoPiece = "infoPiece",
+  detailTypeKilo = "detailTypeKilo",
+  etatFinancier = "etatFinancier",
+  detailTypePiece = "detailTypePiece",
+}

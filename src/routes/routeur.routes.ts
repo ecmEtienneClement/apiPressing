@@ -7,9 +7,8 @@ import clientsRoutes from "./client.routes/client.routes";
 import compteBloquersRoutes from "./compteBloque.routes/compteBloque.routes";
 import demandeDepensesRoutes from "./demandeDepense.routes/demandeDepense.routes";
 import depensesRoutes from "./depense.routes/depense.routes";
-import detailPiecesRoutes from "./detailPiece.routes/detailPiece.routes";
+import detailTypePiecesRoutes from "./detailTypePiece.routes/detailPiece.routes";
 import detailTypeKiloRoutes from "./detailTypeKilo.routes/detailTypePiece.routes";
-import detailTypePiecesRoutes from "./detailTypePiece.routes/detailTypePiece.routes";
 import employersRoutes from "./employer.routes /employer.routes";
 import etatFinancierRoutes from "./etatFinancier.routes/etatFinancier.routes";
 import facturesRoutes from "./facture.routes/facture.routes";
@@ -43,9 +42,8 @@ export default (app: any) => {
     roleAdminAuthorization,
     depensesRoutes
   );
-  app.use("/detailPieces", authAuthorization, detailPiecesRoutes);
-  app.use("/detailTypeKilo", authAuthorization, detailTypeKiloRoutes);
   app.use("/detailTypePieces", authAuthorization, detailTypePiecesRoutes);
+  app.use("/detailTypeKilo", authAuthorization, detailTypeKiloRoutes);
   app.use("/employers", authAuthorization, employersRoutes);
   app.use(
     "/etatFinancier",
@@ -59,10 +57,10 @@ export default (app: any) => {
     roleAdminAuthorization,
     facturesRoutes
   );
-  app.use("/infoKilo", authAuthorization, infoKiloRoutes);
-  app.use("/infoPiece", authAuthorization, infoPieceRoutes);
+  app.use("/infosKilo", authAuthorization, infoKiloRoutes);
+  app.use("/infosPieces", authAuthorization, infoPieceRoutes);
   app.use("/linges", authAuthorization, lingesRoutes);
-  app.use("/typeLinge", authAuthorization, typeLingeRoutes);
+  app.use("/typesLinges", authAuthorization, typeLingeRoutes);
 
   //NOT FOUND
   app.use("*/**", (req: Request, res: Response) => {

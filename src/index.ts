@@ -1,4 +1,3 @@
-import http from "http";
 import https from "https";
 import express from "express";
 import cors from "cors";
@@ -32,11 +31,3 @@ try {
 } catch (error) {
   console.log(error);
 }
-//
-/*
-const server = http.createServer();
-server.on("request", app);
-server.listen(port, () => {
-  console.log(`Server at started on : ${port}`);
-});
-*/

@@ -13,11 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connexionBd_1 = __importDefault(require("../../connexionBd/connexionBd"));
+const namingModelListe_1 = require("../../models/namingModelListe");
 const routes_errors_1 = __importDefault(require("../routes.errors"));
 const routes_helper_1 = __importDefault(require("../routes.helper"));
 //
-const getAdminModel = () => {
-    return connexionBd_1.default.getSequelizeDb().models.Admin;
+const getModels = () => {
+    return connexionBd_1.default.modelsList.get(namingModelListe_1.NameModelsListe.admin);
 };
 const messageAdminNotFound = "Cet administrateur n'éxiste pas.";
 //TODO CREATE ADMIN
@@ -25,7 +26,7 @@ const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         yield routes_helper_1.default.vrfEmailAdmin(req);
         const pwdHash = yield routes_helper_1.default.getHashPwd(req);
-        const dataAdmin = yield getAdminModel().create(Object.assign(Object.assign({}, req.body), { mdp: pwdHash }));
+        const dataAdmin = yield getModels().create(Object.assign(Object.assign({}, req.body), { mdp: pwdHash }));
         return res.status(201).json(dataAdmin);
     }
     catch (error) {
@@ -35,7 +36,11 @@ const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 //TODO GET ALL ADMINS
 const getAllAdmins = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dataAdmins = yield getAdminModel().findAll();
+        //
+        const dataAdmins = yield getModels().findAll({
+            include: { all: true },
+        });
+        //
         return res.json(dataAdmins);
     }
     catch (error) {
@@ -44,12 +49,15 @@ const getAllAdmins = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 //TODO GET ADMIN BY ID
 const getAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataAdmin = yield getAdminModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        //
+        const dataAdmin = yield getModels().findByPk(id, {
+            include: { all: true },
+        });
         return dataAdmin
             ? res.json(dataAdmin)
-            : res.json({ message: messageAdminNotFound });
+            : res.status(404).json({ message: messageAdminNotFound });
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);
@@ -57,12 +65,16 @@ const getAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 //TODO UPDATE ADMIN BY ID
 const updateAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataAdmin = yield getAdminModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataAdmin = yield getModels().findByPk(id);
         if (!dataAdmin) {
-            return res.json({ message: messageAdminNotFound });
+            return res.status(404).json({ message: messageAdminNotFound });
         }
+        //vrf OWNER
+        const idAdminOwnerData = dataAdmin.getDataValue("id");
+        routes_helper_1.default.vrfUserOwner(req, idAdminOwnerData, false);
+        //
         const adminUpdated = yield dataAdmin.update(Object.assign({}, req.body), { where: { id: id } });
         return res.json(adminUpdated);
     }
@@ -72,12 +84,16 @@ const updateAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 //TODO DELETE ADMIN BY ID
 const deleteAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = routes_helper_1.default.getParamId(req);
     try {
-        const dataAdmin = yield getAdminModel().findByPk(id);
+        const id = routes_helper_1.default.getParamId(req);
+        const dataAdmin = yield getModels().findByPk(id);
         if (!dataAdmin) {
-            return res.json({ message: messageAdminNotFound });
+            return res.status(404).json({ message: messageAdminNotFound });
         }
+        //vrf OWNER
+        const idAdminOwnerData = dataAdmin.getDataValue("id");
+        routes_helper_1.default.vrfUserOwner(req, idAdminOwnerData, false);
+        //
         yield dataAdmin.destroy();
         return res.json({ deleted: true });
     }
@@ -88,7 +104,7 @@ const deleteAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function
 //TODO DELETE ALL ADMINS
 const deleteAllAdmins = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield getAdminModel().drop();
+        yield getModels().drop();
         return res.json({ deleted: true });
     }
     catch (error) {

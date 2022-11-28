@@ -32,27 +32,5 @@ export default (sequelize: Sequelize, dataTypes: any) => {
         isInt: { msg: "Le montant de la depense est incorrecte." },
       },
     },
-    //TODO
-    dataUpdateCaisse: {
-      type: dataTypes.DATE,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "La date de mise à jour de la caisse ne peut étre vide.",
-        },
-        notNull: { msg: "La date de mise à jour de la caisse est requise." },
-      },
-    },
-    //TODO
-    dataUpdateDepense: {
-      type: dataTypes.DATE,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "La date de mise à jour de la dépense ne peut étre vide.",
-        },
-        notNull: { msg: "La date de mise à jour de la dépense est requise." },
-      },
-    },
   });
 };

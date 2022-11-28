@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getEmployerModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Employe;
+
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.employer);
 };
 const messageEmployerNotFound = "Cet employé n'éxiste pas.";
 
@@ -13,7 +15,7 @@ const messageEmployerNotFound = "Cet employé n'éxiste pas.";
 const createEmployer = async (req: Request, res: Response) => {
   try {
     const pwdHash = await routesHelpers.getHashPwd(req);
-    const dataEmployer = await getEmployerModel().create({
+    const dataEmployer = await getModels().create({
       ...req.body,
       mdp: pwdHash,
     });
@@ -26,7 +28,11 @@ const createEmployer = async (req: Request, res: Response) => {
 //TODO GET ALL EMPLOYERS
 const getAllEmployers = async (req: Request, res: Response) => {
   try {
-    const dataEmployers = await getEmployerModel().findAll();
+    //
+    const dataEmployers = await getModels().findAll({
+      include: { all: true },
+    });
+    //
     return res.json(dataEmployers);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -35,12 +41,24 @@ const getAllEmployers = async (req: Request, res: Response) => {
 
 //TODO GET EMPLOYER BY ID
 const getEmployerById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataEmployer = await getEmployerModel().findByPk(id);
-    return dataEmployer
-      ? res.json(dataEmployer)
-      : res.json({ message: messageEmployerNotFound });
+    const id = routesHelpers.getParamId(req);
+
+    //
+    const dataEmployer = await getModels().findByPk(id, {
+      include: { all: true },
+    });
+
+    if (!dataEmployer) {
+      return res.status(404).json({ message: messageEmployerNotFound });
+    }
+
+    //vrf OWNER
+    const idEmployerOwnerData: string = dataEmployer.getDataValue("id");
+    routesHelpers.vrfUserOwner(req, idEmployerOwnerData, true);
+    //
+
+    return res.json(dataEmployer);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }
@@ -48,12 +66,17 @@ const getEmployerById = async (req: Request, res: Response) => {
 
 //TODO UPDATE EMPLOYER BY ID
 const updateEmployerById = async (req: Request, res: Response) => {
-  const id = routesHelpers.getParamId(req);
   try {
-    const dataEmployer = await getEmployerModel().findByPk(id);
+    const id = routesHelpers.getParamId(req);
+    const dataEmployer = await getModels().findByPk(id);
     if (!dataEmployer) {
-      return res.json({ message: messageEmployerNotFound });
+      return res.status(404).json({ message: messageEmployerNotFound });
     }
+
+    //vrf OWNER
+    const idEmployerOwnerData: string = dataEmployer.getDataValue("id");
+    routesHelpers.vrfUserOwner(req, idEmployerOwnerData, true);
+    //
 
     const employerUpdated = await dataEmployer.update(
       { ...req.body },
@@ -69,9 +92,9 @@ const updateEmployerById = async (req: Request, res: Response) => {
 const deleteEmployerById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataEmployer = await getEmployerModel().findByPk(id);
+    const dataEmployer = await getModels().findByPk(id);
     if (!dataEmployer) {
-      return res.json({ message: messageEmployerNotFound });
+      return res.status(404).json({ message: messageEmployerNotFound });
     }
 
     await dataEmployer.destroy();
@@ -84,7 +107,7 @@ const deleteEmployerById = async (req: Request, res: Response) => {
 //TODO DELETE ALL EMPLOYERS
 const deleteAllEmployers = async (req: Request, res: Response) => {
   try {
-    await getEmployerModel().drop();
+    await getModels().drop();
     return res.json({ deleted: true });
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);

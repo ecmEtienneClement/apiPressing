@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
 import ConnexionBd from "../../connexionBd/connexionBd";
+import { NameModelsListe } from "../../models/namingModelListe";
 import routesErrors from "../routes.errors";
 import routesHelpers from "../routes.helper";
 
 //
-const getInfoPieceModel = () => {
-  return ConnexionBd.getSequelizeDb().models.Info_piece;
+const getModels = () => {
+  return ConnexionBd.modelsList.get(NameModelsListe.infoPiece);
 };
 const messageInfoPieceNotFound = "Cet info sur le piece n'éxiste pas.";
 
 //TODO CREATE INFO_PIECE
 const createInfoPiece = async (req: Request, res: Response) => {
   try {
-    const dataInfoPiece = await getInfoPieceModel().create({ ...req.body });
+    const dataInfoPiece = await getModels().create({
+      ...req.body,
+    });
     return res.status(201).json(dataInfoPiece);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -22,7 +25,7 @@ const createInfoPiece = async (req: Request, res: Response) => {
 //TODO GET INFO_PIECE
 const getInfoPiece = async (req: Request, res: Response) => {
   try {
-    const dataInfoPiece = await getInfoPieceModel().findAll({ limit: 1 });
+    const dataInfoPiece = await getModels().findAll();
     return res.json(dataInfoPiece);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
@@ -33,9 +36,9 @@ const getInfoPiece = async (req: Request, res: Response) => {
 const updateInfoPieceById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataInfoPiece = await getInfoPieceModel().findByPk(id);
+    const dataInfoPiece = await getModels().findByPk(id);
     if (!dataInfoPiece) {
-      return res.json({ message: messageInfoPieceNotFound });
+      return res.status(404).json({ message: messageInfoPieceNotFound });
     }
 
     const infoPieceUpdated = await dataInfoPiece.update(
@@ -52,9 +55,9 @@ const updateInfoPieceById = async (req: Request, res: Response) => {
 const deleteInfoPieceById = async (req: Request, res: Response) => {
   const id = routesHelpers.getParamId(req);
   try {
-    const dataInfoPiece = await getInfoPieceModel().findByPk(id);
+    const dataInfoPiece = await getModels().findByPk(id);
     if (!dataInfoPiece) {
-      return res.json({ message: messageInfoPieceNotFound });
+      return res.status(404).json({ message: messageInfoPieceNotFound });
     }
 
     await dataInfoPiece.destroy();
