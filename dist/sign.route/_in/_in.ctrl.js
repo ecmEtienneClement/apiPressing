@@ -29,9 +29,10 @@ const messageEmployerNotFound = "Cet employé n'éxiste pas.";
 //TODO SIGN_IN
 exports.default = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //
-    const email = req.body.email;
+    let email = req.body.email;
     const pwd = req.body.mdp;
     const isAdmin = email.startsWith("#");
+    email = isAdmin ? email.substr(1, email.length - 1) : email;
     //
     const modelAdminOrEmployer = isAdmin
         ? getModels(namingModelListe_1.NameModelsListe.admin)
@@ -46,7 +47,7 @@ exports.default = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         //
         if (!dataEmployerOrAdmin) {
-            return res.json({ message: messageUserNotFound });
+            return res.status(404).json({ message: messageUserNotFound });
         }
         //
         const isGood = yield bcrypt_1.default.compare(pwd, dataEmployerOrAdmin.getDataValue("mdp"));

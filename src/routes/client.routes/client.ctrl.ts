@@ -64,11 +64,8 @@ const updateClientById = async (req: Request, res: Response) => {
     const employerOwnerClient: string = dataClient.getDataValue("EmployeId");
     routesHelpers.vrfUserOwner(req, employerOwnerClient, true);
     //
-    const clientUpdated = await dataClient.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
-    return res.json(clientUpdated);
+    await dataClient.update({ ...req.body }, { where: { id: id } });
+    return getClientById(req, res);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }

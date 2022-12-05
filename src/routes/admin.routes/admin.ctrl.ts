@@ -68,12 +68,9 @@ const updateAdminById = async (req: Request, res: Response) => {
     const idAdminOwnerData: string = dataAdmin.getDataValue("id");
     routesHelpers.vrfUserOwner(req, idAdminOwnerData, false);
     //
-    const adminUpdated = await dataAdmin.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
-    return res.json(adminUpdated);
-  } catch (error) {
+    await dataAdmin.update({ ...req.body }, { where: { id: id } });
+    return getAdminById(req, res);
+  } catch (error) { 
     routesErrors.traitementErrorsReq(error, res);
   }
 };

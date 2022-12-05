@@ -70,8 +70,8 @@ const updateFactureById = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (!dataFacture) {
             return res.status(404).json({ message: messageFactureNotFound });
         }
-        const factureUpdated = yield dataFacture.update(Object.assign({}, req.body), { where: { id: id } });
-        return res.json(factureUpdated);
+        yield dataFacture.update(Object.assign({}, req.body), { where: { id: id } });
+        return getFactureById(req, res);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

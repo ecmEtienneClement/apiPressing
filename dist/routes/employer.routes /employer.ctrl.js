@@ -79,8 +79,8 @@ const updateEmployerById = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const idEmployerOwnerData = dataEmployer.getDataValue("id");
         routes_helper_1.default.vrfUserOwner(req, idEmployerOwnerData, true);
         //
-        const employerUpdated = yield dataEmployer.update(Object.assign({}, req.body), { where: { id: id } });
-        return res.json(employerUpdated);
+        yield dataEmployer.update(Object.assign({}, req.body), { where: { id: id } });
+        return getEmployerById(req, res);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

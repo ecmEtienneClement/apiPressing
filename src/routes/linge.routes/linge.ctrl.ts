@@ -71,11 +71,9 @@ const updateLingeById = async (req: Request, res: Response) => {
     routesHelpers.vrfUserOwner(req, employerOwnerLinge, true);
     //
 
-    const adminUpdated = await dataLinge.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
-    return res.json(adminUpdated);
+    await dataLinge.update({ ...req.body }, { where: { id: id } });
+    return getLingeById(req, res);
+   
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }

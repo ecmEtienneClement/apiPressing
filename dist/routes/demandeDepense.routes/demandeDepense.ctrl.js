@@ -79,8 +79,8 @@ const updateDemandeDepenseById = (req, res) => __awaiter(void 0, void 0, void 0,
         const employerOwnerDmdDepense = dataDemandeDepense.getDataValue("EmployeId");
         routes_helper_1.default.vrfUserOwner(req, employerOwnerDmdDepense, false);
         //
-        const DemandeDepenseUpdated = yield dataDemandeDepense.update(Object.assign({}, req.body), { where: { id: id } });
-        return res.json(DemandeDepenseUpdated);
+        yield dataDemandeDepense.update(Object.assign({}, req.body), { where: { id: id } });
+        return getDemandeDepenseById(req, res);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

@@ -76,8 +76,8 @@ const updateLingeById = (req, res) => __awaiter(void 0, void 0, void 0, function
         const employerOwnerLinge = dataLinge.getDataValue("EmployeId");
         routes_helper_1.default.vrfUserOwner(req, employerOwnerLinge, true);
         //
-        const adminUpdated = yield dataLinge.update(Object.assign({}, req.body), { where: { id: id } });
-        return res.json(adminUpdated);
+        yield dataLinge.update(Object.assign({}, req.body), { where: { id: id } });
+        return getLingeById(req, res);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

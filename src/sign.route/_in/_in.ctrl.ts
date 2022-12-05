@@ -18,9 +18,11 @@ const messageEmployerNotFound = "Cet employé n'éxiste pas.";
 //TODO SIGN_IN
 export default async (req: Request, res: Response) => {
   //
-  const email: string = req.body.email;
+  let email: string = req.body.email;
   const pwd: string = req.body.mdp;
   const isAdmin = email.startsWith("#");
+  email = isAdmin ? email.substr(1, email.length - 1) : email;
+
   //
   const modelAdminOrEmployer = isAdmin
     ? getModels(NameModelsListe.admin)
@@ -35,7 +37,7 @@ export default async (req: Request, res: Response) => {
     });
     //
     if (!dataEmployerOrAdmin) {
-      return res.json({ message: messageUserNotFound });
+      return res.status(404).json({ message: messageUserNotFound });
     }
     //
     const isGood = await bcrypt.compare(

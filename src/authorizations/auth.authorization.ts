@@ -5,8 +5,6 @@ import { env } from "process";
 //TODO
 export default (req: Request, res: Response, next) => {
   try {
-      next();
-    /*
     const token = req.headers.authorization.split(" ")[1];
 
     const tokenVerify: any = jwt.verify(token, env.SECRET_KEY, {
@@ -15,18 +13,19 @@ export default (req: Request, res: Response, next) => {
     });
 
     //INFO TOKEN
-    const userIdToken = tokenVerify.userIdAuth;
-    const userEmailToken = tokenVerify.userEmailAuth;
-    const userRoleToken = tokenVerify.userRoleAuth;
-    const userIpToken = tokenVerify.userIpAuth;
-    const userUserAgentToken = tokenVerify.userUserAgentAuth;
+    const userIdToken: string = tokenVerify.userIdAuth;
+    const userEmailToken: string = tokenVerify.userEmailAuth;
+    const userRoleToken: string = tokenVerify.userRoleAuth;
+    const userIpToken: string = tokenVerify.userIpAuth;
+    const userUserAgentToken: string = tokenVerify.userUserAgentAuth;
 
     //INFO URL
     const userIdReq = req.query.id;
     const userEmailReq = req.query.em;
     const userRoleReq = req.query.rl;
-    const userIpReq = req.query.ip;
-    const userUserAgentReq = req.query.ua;
+    const userIpReq = req.ip;
+    const userUserAgentReq = req.headers["user-agent"];
+
     //VR TOKEN AND URL
     if (
       userIdToken != userIdReq ||
@@ -39,7 +38,6 @@ export default (req: Request, res: Response, next) => {
     } else {
       next();
     }
-    */
   } catch (error) {
     res.status(403).json({
       message: "Token invalide veillez générer un nouveau token.",

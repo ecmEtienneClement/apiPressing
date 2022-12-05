@@ -75,8 +75,8 @@ const updateAdminById = (req, res) => __awaiter(void 0, void 0, void 0, function
         const idAdminOwnerData = dataAdmin.getDataValue("id");
         routes_helper_1.default.vrfUserOwner(req, idAdminOwnerData, false);
         //
-        const adminUpdated = yield dataAdmin.update(Object.assign({}, req.body), { where: { id: id } });
-        return res.json(adminUpdated);
+        yield dataAdmin.update(Object.assign({}, req.body), { where: { id: id } });
+        return getAdminById(req, res);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

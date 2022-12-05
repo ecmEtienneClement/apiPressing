@@ -61,7 +61,7 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
             type: dataTypes.INTEGER,
             allowNull: false,
             validate: {
-                Empty: {
+                notEmpty: {
                     msg: "Le coordonné de X ne peut étre vide.",
                 },
                 notNull: { msg: "Le coordonné de X est requise." },
@@ -73,7 +73,7 @@ exports.default = (sequelize, dataTypes) => __awaiter(void 0, void 0, void 0, fu
             type: dataTypes.INTEGER,
             allowNull: false,
             validate: {
-                Empty: {
+                notEmpty: {
                     msg: "Le coordonné de Y ne peut étre vide.",
                 },
                 notNull: { msg: "Le coordonné de Y est requise." },

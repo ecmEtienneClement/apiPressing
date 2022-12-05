@@ -62,11 +62,8 @@ const updateFactureById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: messageFactureNotFound });
     }
 
-    const factureUpdated = await dataFacture.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
-    return res.json(factureUpdated);
+    await dataFacture.update({ ...req.body }, { where: { id: id } });
+    return getFactureById(req, res);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }

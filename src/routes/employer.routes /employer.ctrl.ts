@@ -78,11 +78,8 @@ const updateEmployerById = async (req: Request, res: Response) => {
     routesHelpers.vrfUserOwner(req, idEmployerOwnerData, true);
     //
 
-    const employerUpdated = await dataEmployer.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
-    return res.json(employerUpdated);
+    await dataEmployer.update({ ...req.body }, { where: { id: id } });
+    return getEmployerById(req, res);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }

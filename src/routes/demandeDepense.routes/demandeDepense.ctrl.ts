@@ -76,11 +76,8 @@ const updateDemandeDepenseById = async (req: Request, res: Response) => {
     routesHelpers.vrfUserOwner(req, employerOwnerDmdDepense, false);
     //
 
-    const DemandeDepenseUpdated = await dataDemandeDepense.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
-    return res.json(DemandeDepenseUpdated);
+    await dataDemandeDepense.update({ ...req.body }, { where: { id: id } });
+    return getDemandeDepenseById(req, res);
   } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }

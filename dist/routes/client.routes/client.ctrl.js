@@ -72,8 +72,8 @@ const updateClientById = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const employerOwnerClient = dataClient.getDataValue("EmployeId");
         routes_helper_1.default.vrfUserOwner(req, employerOwnerClient, true);
         //
-        const clientUpdated = yield dataClient.update(Object.assign({}, req.body), { where: { id: id } });
-        return res.json(clientUpdated);
+        yield dataClient.update(Object.assign({}, req.body), { where: { id: id } });
+        return getClientById(req, res);
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

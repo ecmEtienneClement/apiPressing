@@ -53,7 +53,7 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
       type: dataTypes.INTEGER,
       allowNull: false,
       validate: {
-        Empty: {
+        notEmpty: {
           msg: "Le coordonné de X ne peut étre vide.",
         },
         notNull: { msg: "Le coordonné de X est requise." },
@@ -65,7 +65,7 @@ export default async (sequelize: Sequelize, dataTypes: any) => {
       type: dataTypes.INTEGER,
       allowNull: false,
       validate: {
-        Empty: {
+        notEmpty: {
           msg: "Le coordonné de Y ne peut étre vide.",
         },
         notNull: { msg: "Le coordonné de Y est requise." },
