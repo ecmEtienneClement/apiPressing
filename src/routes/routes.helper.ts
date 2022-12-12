@@ -2,7 +2,6 @@ import { Request } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { env } from "process";
-import ConnexionBd from "../connexionBd/connexionBd";
 const roundSalt = 10;
 
 /**********************************HELPER FUNCTIONS************************************* */
@@ -18,7 +17,7 @@ const getParamId = (req: Request): string | null => {
 };
 //TODO GET PARAM EMAIL
 const getParamEmail = (req: Request): string | null => {
-  const email = req.params.email;
+  const email = req.params.em;
   /**
    *
    * PAS DE TRAITEMENT DU PARAM EMAIL POUR L'INSTANT
@@ -27,12 +26,11 @@ const getParamEmail = (req: Request): string | null => {
   return email ? email : null;
 };
 //TODO VRF USEROWNER
-const vrfUserOwner = async (
+const vrfUserOwner = (
   req: Request,
   idUserOwnerRessouce: string,
   authorizationAdmin: boolean
-): Promise<void> => {
-  /*
+): void => {
   const token = req.headers.authorization.split(" ")[1];
   const tokenVerify: any = jwt.verify(token, env.SECRET_KEY, {
     audience: "MOBILE APP",
@@ -46,22 +44,24 @@ const vrfUserOwner = async (
   //  TRAITEMENT VRF SI ADMIN EST AUTORISER A EFFECTUER CETTE ACTION
   if (authorizationAdmin) {
     if (userIdToken != idUserOwnerRessouce && userRoleToken != "admin") {
-      const errorUserOwner = new Error();
+      let errorUserOwner = new Error();
       errorUserOwner.name = "Forbidden";
       errorUserOwner.message =
         "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+
       throw errorUserOwner;
     }
   } else {
     if (userIdToken != idUserOwnerRessouce) {
-      const errorUserOwner = new Error();
+      let errorUserOwner = new Error();
+
       errorUserOwner.name = "Forbidden";
       errorUserOwner.message =
         "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+
       throw errorUserOwner;
     }
   }
-  */
 };
 //TODO VRF EMAIL ADMIN
 const vrfEmailAdmin = async (req: Request): Promise<void> => {
@@ -69,19 +69,19 @@ const vrfEmailAdmin = async (req: Request): Promise<void> => {
 
   //VRF_EMAIL
   if (!email) {
-    const errorPwd = new Error();
-    errorPwd.name = "NotFoundEmail";
-    errorPwd.message = "L'email est requise";
-    throw errorPwd;
+    const errorEmail = new Error();
+    errorEmail.name = "NotFoundEmail";
+    errorEmail.message = "L'email est requise";
+    throw errorEmail;
   }
 
   //  TRAITEMENT EMAIL
   if (!email.startsWith("#")) {
-    const errorPwd = new Error();
-    errorPwd.name = "InvalidEmail";
-    errorPwd.message =
+    const errorEmail = new Error();
+    errorEmail.name = "InvalidEmail";
+    errorEmail.message =
       "L'email de l'administrateur doit étre précédé de #. \n Exp : #firstadmin@gmail.com";
-    throw errorPwd;
+    throw errorEmail;
   }
 };
 //TODO GET PWD HASH

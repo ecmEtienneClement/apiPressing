@@ -25,8 +25,11 @@ const messageAdminNotFound = "Cet administrateur n'éxiste pas.";
 const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield routes_helper_1.default.vrfEmailAdmin(req);
+        let email = req.body.email;
+        //J'enleve le # avant l'enregistrement
+        email = email.substr(1, email.length - 1);
         const pwdHash = yield routes_helper_1.default.getHashPwd(req);
-        const dataAdmin = yield getModels().create(Object.assign(Object.assign({}, req.body), { mdp: pwdHash }));
+        const dataAdmin = yield getModels().create(Object.assign(Object.assign({}, req.body), { email, mdp: pwdHash }));
         return res.status(201).json(dataAdmin);
     }
     catch (error) {

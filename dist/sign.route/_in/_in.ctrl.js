@@ -28,63 +28,78 @@ const messageAdminNotFound = "Cet administrateur n'éxiste pas.";
 const messageEmployerNotFound = "Cet employé n'éxiste pas.";
 //TODO SIGN_IN
 exports.default = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //
-    let email = req.body.email;
-    const pwd = req.body.mdp;
-    const isAdmin = email.startsWith("#");
-    email = isAdmin ? email.substr(1, email.length - 1) : email;
-    //
-    const modelAdminOrEmployer = isAdmin
-        ? getModels(namingModelListe_1.NameModelsListe.admin)
-        : getModels(namingModelListe_1.NameModelsListe.employer);
-    const messageUserNotFound = isAdmin
-        ? messageAdminNotFound
-        : messageEmployerNotFound;
-    //
     try {
-        const dataEmployerOrAdmin = yield modelAdminOrEmployer.findOne({
+        let email = req.body.email;
+        const dataCompteBloquer = yield getModels(namingModelListe_1.NameModelsListe.cmpBloquer).findOne({
             where: { email },
         });
-        //
-        if (!dataEmployerOrAdmin) {
-            return res.status(404).json({ message: messageUserNotFound });
+        if (dataCompteBloquer) {
+            return res.status(403).json({
+                message: "Désoler votre compte est bloqué! Merci de contacter votre administrateur.",
+            });
         }
-        //
-        const isGood = yield bcrypt_1.default.compare(pwd, dataEmployerOrAdmin.getDataValue("mdp"));
-        //
-        if (!isGood) {
-            return res
-                .status(403)
-                .json({ message: "Email ou mot de passe incorrect" });
+        else {
+            //
+            const pwd = req.body.mdp;
+            const isAdmin = email.startsWith("#");
+            email = isAdmin ? email.substr(1, email.length - 1) : email;
+            //
+            const modelAdminOrEmployer = isAdmin
+                ? getModels(namingModelListe_1.NameModelsListe.admin)
+                : getModels(namingModelListe_1.NameModelsListe.employer);
+            const messageUserNotFound = isAdmin
+                ? messageAdminNotFound
+                : messageEmployerNotFound;
+            //
+            try {
+                const dataEmployerOrAdmin = yield modelAdminOrEmployer.findOne({
+                    where: { email },
+                });
+                //
+                if (!dataEmployerOrAdmin) {
+                    return res.status(404).json({ message: messageUserNotFound });
+                }
+                //
+                const isGood = yield bcrypt_1.default.compare(pwd, dataEmployerOrAdmin.getDataValue("mdp"));
+                //
+                if (!isGood) {
+                    return res
+                        .status(403)
+                        .json({ message: "Email ou mot de passe incorrect" });
+                }
+                const userIdAuth = dataEmployerOrAdmin.getDataValue("id");
+                const userEmailAuth = dataEmployerOrAdmin.getDataValue("email");
+                const userNomAuth = dataEmployerOrAdmin.getDataValue("nom");
+                const userPrenomAuth = dataEmployerOrAdmin.getDataValue("prenom");
+                const userRoleAuth = dataEmployerOrAdmin.getDataValue("role");
+                const userIpAuth = req.ip;
+                const userUserAgentAuth = req.headers["user-agent"];
+                res.json({
+                    userIdAuth,
+                    userEmailAuth,
+                    userNomAuth,
+                    userPrenomAuth,
+                    userRoleAuth,
+                    userIpAuth,
+                    userUserAgentAuth,
+                    token: jsonwebtoken_1.default.sign({
+                        userIdAuth,
+                        userEmailAuth,
+                        userRoleAuth,
+                        userIpAuth,
+                        userUserAgentAuth,
+                    }, process_1.env.SECRET_KEY, {
+                        expiresIn: "5h",
+                        audience: "MOBILE APP",
+                        algorithm: "HS384",
+                    }),
+                });
+                //
+            }
+            catch (error) {
+                routes_errors_1.default.traitementErrorsReq(error, res);
+            }
         }
-        const userIdAuth = dataEmployerOrAdmin.getDataValue("id");
-        const userEmailAuth = dataEmployerOrAdmin.getDataValue("email");
-        const userNomAuth = dataEmployerOrAdmin.getDataValue("nom");
-        const userPrenomAuth = dataEmployerOrAdmin.getDataValue("prenom");
-        const userRoleAuth = dataEmployerOrAdmin.getDataValue("role");
-        const userIpAuth = req.ip;
-        const userUserAgentAuth = req.headers["user-agent"];
-        res.json({
-            userIdAuth,
-            userEmailAuth,
-            userNomAuth,
-            userPrenomAuth,
-            userRoleAuth,
-            userIpAuth,
-            userUserAgentAuth,
-            token: jsonwebtoken_1.default.sign({
-                userIdAuth,
-                userEmailAuth,
-                userRoleAuth,
-                userIpAuth,
-                userUserAgentAuth,
-            }, process_1.env.SECRET_KEY, {
-                expiresIn: "5h",
-                audience: "MOBILE APP",
-                algorithm: "HS384",
-            }),
-        });
-        //
     }
     catch (error) {
         routes_errors_1.default.traitementErrorsReq(error, res);

@@ -13,6 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const process_1 = require("process");
 const roundSalt = 10;
 /**********************************HELPER FUNCTIONS************************************* */
 //TODO GET PARAM ID
@@ -26,7 +28,7 @@ const getParamId = (req) => {
 };
 //TODO GET PARAM EMAIL
 const getParamEmail = (req) => {
-    const email = req.params.email;
+    const email = req.params.em;
     /**
      *
      * PAS DE TRAITEMENT DU PARAM EMAIL POUR L'INSTANT
@@ -34,55 +36,52 @@ const getParamEmail = (req) => {
     return email ? email : null;
 };
 //TODO VRF USEROWNER
-const vrfUserOwner = (req, idUserOwnerRessouce, authorizationAdmin) => __awaiter(void 0, void 0, void 0, function* () {
-    /*
+const vrfUserOwner = (req, idUserOwnerRessouce, authorizationAdmin) => {
     const token = req.headers.authorization.split(" ")[1];
-    const tokenVerify: any = jwt.verify(token, env.SECRET_KEY, {
-      audience: "MOBILE APP",
-      algorithms: ["HS384"],
+    const tokenVerify = jsonwebtoken_1.default.verify(token, process_1.env.SECRET_KEY, {
+        audience: "MOBILE APP",
+        algorithms: ["HS384"],
     });
-  
     //INFO USER_TOKEN
     const userIdToken = tokenVerify.userIdAuth;
     const userRoleToken = tokenVerify.userRoleAuth;
-  
     //  TRAITEMENT VRF SI ADMIN EST AUTORISER A EFFECTUER CETTE ACTION
     if (authorizationAdmin) {
-      if (userIdToken != idUserOwnerRessouce && userRoleToken != "admin") {
-        const errorUserOwner = new Error();
-        errorUserOwner.name = "Forbidden";
-        errorUserOwner.message =
-          "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
-        throw errorUserOwner;
-      }
-    } else {
-      if (userIdToken != idUserOwnerRessouce) {
-        const errorUserOwner = new Error();
-        errorUserOwner.name = "Forbidden";
-        errorUserOwner.message =
-          "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
-        throw errorUserOwner;
-      }
+        if (userIdToken != idUserOwnerRessouce && userRoleToken != "admin") {
+            let errorUserOwner = new Error();
+            errorUserOwner.name = "Forbidden";
+            errorUserOwner.message =
+                "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+            throw errorUserOwner;
+        }
     }
-    */
-});
+    else {
+        if (userIdToken != idUserOwnerRessouce) {
+            let errorUserOwner = new Error();
+            errorUserOwner.name = "Forbidden";
+            errorUserOwner.message =
+                "[*Forbidden*] Vous n'ête pas autorisé a éffectué cette action .";
+            throw errorUserOwner;
+        }
+    }
+};
 //TODO VRF EMAIL ADMIN
 const vrfEmailAdmin = (req) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     //VRF_EMAIL
     if (!email) {
-        const errorPwd = new Error();
-        errorPwd.name = "NotFoundEmail";
-        errorPwd.message = "L'email est requise";
-        throw errorPwd;
+        const errorEmail = new Error();
+        errorEmail.name = "NotFoundEmail";
+        errorEmail.message = "L'email est requise";
+        throw errorEmail;
     }
     //  TRAITEMENT EMAIL
     if (!email.startsWith("#")) {
-        const errorPwd = new Error();
-        errorPwd.name = "InvalidEmail";
-        errorPwd.message =
+        const errorEmail = new Error();
+        errorEmail.name = "InvalidEmail";
+        errorEmail.message =
             "L'email de l'administrateur doit étre précédé de #. \n Exp : #firstadmin@gmail.com";
-        throw errorPwd;
+        throw errorEmail;
     }
 });
 //TODO GET PWD HASH

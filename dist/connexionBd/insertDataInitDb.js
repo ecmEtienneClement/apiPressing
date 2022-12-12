@@ -110,8 +110,8 @@ class InsertDataInitDb {
             if (dataDefautlInfoKilo.length < 1) {
                 try {
                     yield modelDefaultInfoKilo.create({
-                        prixLinge: 0,
-                        prixRepassage: 0,
+                        prixLinge: 400,
+                        prixRepassage: 125,
                     });
                 }
                 catch (error) {
@@ -132,63 +132,63 @@ class InsertDataInitDb {
                     Promise.all([
                         yield modelDefaultInfoPiece.create({
                             nom: "Chemise",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 200,
+                            prixRepassage: 100,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Combinaison",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 350,
+                            prixRepassage: 150,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Gilet",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 100,
+                            prixRepassage: 100,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Jeans",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 250,
+                            prixRepassage: 100,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Jupe",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 250,
+                            prixRepassage: 100,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Joggin",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 300,
+                            prixRepassage: 150,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Pull",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 250,
+                            prixRepassage: 150,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Tee-shirt",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 100,
+                            prixRepassage: 100,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Veste",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 400,
+                            prixRepassage: 200,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Manteau",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 350,
+                            prixRepassage: 150,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Robe",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 450,
+                            prixRepassage: 200,
                         }),
                         yield modelDefaultInfoPiece.create({
                             nom: "Blouse",
-                            prixLinge: 0,
-                            prixRepassage: 0,
+                            prixLinge: 150,
+                            prixRepassage: 100,
                         }),
                     ]);
                 }

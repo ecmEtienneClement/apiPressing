@@ -99,8 +99,8 @@ export class InsertDataInitDb {
     if (dataDefautlInfoKilo.length < 1) {
       try {
         await modelDefaultInfoKilo.create({
-          prixLinge: 0,
-          prixRepassage: 0,
+          prixLinge: 400,
+          prixRepassage: 125,
         });
       } catch (error) {
         throw new Error(
@@ -123,63 +123,63 @@ export class InsertDataInitDb {
         Promise.all([
           await modelDefaultInfoPiece.create({
             nom: "Chemise",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 200,
+            prixRepassage: 100,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Combinaison",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 350,
+            prixRepassage: 150,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Gilet",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 100,
+            prixRepassage: 100,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Jeans",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 250,
+            prixRepassage: 100,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Jupe",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 250,
+            prixRepassage: 100,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Joggin",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 300,
+            prixRepassage: 150,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Pull",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 250,
+            prixRepassage: 150,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Tee-shirt",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 100,
+            prixRepassage: 100,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Veste",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 400,
+            prixRepassage: 200,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Manteau",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 350,
+            prixRepassage: 150,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Robe",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 450,
+            prixRepassage: 200,
           }),
           await modelDefaultInfoPiece.create({
             nom: "Blouse",
-            prixLinge: 0,
-            prixRepassage: 0,
+            prixLinge: 150,
+            prixRepassage: 100,
           }),
         ]);
       } catch (error) {

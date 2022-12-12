@@ -56,6 +56,7 @@ export default class ConnexionBd {
 
   //TODO INIT MODELS_LIST
   private static initModelsList = (sequelize: Sequelize): void => {
+    const etatFinancier = sequelize.models.Etat_financier;
     const employers = sequelize.models.Employe;
     const admins = sequelize.models.Admin;
     const factures = sequelize.models.Facture;
@@ -70,6 +71,7 @@ export default class ConnexionBd {
     const detailTypeKilo = sequelize.models.Detail_type_kilo;
     const detailTypePiece = sequelize.models.Detail_type_piece;
     //
+    this.modelsList.set(NameModelsListe.etatFinancier, etatFinancier);
     this.modelsList.set(NameModelsListe.admin, admins);
     this.modelsList.set(NameModelsListe.facture, factures);
     this.modelsList.set(NameModelsListe.employer, employers);

@@ -64,6 +64,7 @@ _a = ConnexionBd;
 ConnexionBd.modelsList = new Map();
 //TODO INIT MODELS_LIST
 ConnexionBd.initModelsList = (sequelize) => {
+    const etatFinancier = sequelize.models.Etat_financier;
     const employers = sequelize.models.Employe;
     const admins = sequelize.models.Admin;
     const factures = sequelize.models.Facture;
@@ -78,6 +79,7 @@ ConnexionBd.initModelsList = (sequelize) => {
     const detailTypeKilo = sequelize.models.Detail_type_kilo;
     const detailTypePiece = sequelize.models.Detail_type_piece;
     //
+    _a.modelsList.set(namingModelListe_1.NameModelsListe.etatFinancier, etatFinancier);
     _a.modelsList.set(namingModelListe_1.NameModelsListe.admin, admins);
     _a.modelsList.set(namingModelListe_1.NameModelsListe.facture, factures);
     _a.modelsList.set(namingModelListe_1.NameModelsListe.employer, employers);

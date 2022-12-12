@@ -13,9 +13,13 @@ const messageAdminNotFound = "Cet administrateur n'éxiste pas.";
 const createAdmin = async (req: Request, res: Response) => {
   try {
     await routesHelpers.vrfEmailAdmin(req);
+    let email = req.body.email;
+    //J'enleve le # avant l'enregistrement
+    email = email.substr(1, email.length - 1);
     const pwdHash = await routesHelpers.getHashPwd(req);
     const dataAdmin = await getModels().create({
       ...req.body,
+      email,
       mdp: pwdHash,
     });
     return res.status(201).json(dataAdmin);
@@ -70,7 +74,7 @@ const updateAdminById = async (req: Request, res: Response) => {
     //
     await dataAdmin.update({ ...req.body }, { where: { id: id } });
     return getAdminById(req, res);
-  } catch (error) { 
+  } catch (error) {
     routesErrors.traitementErrorsReq(error, res);
   }
 };
