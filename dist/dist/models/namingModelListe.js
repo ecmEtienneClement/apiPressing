@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NameModelsListe = void 0;
+var NameModelsListe;
+(function (NameModelsListe) {
+    NameModelsListe["admin"] = "admin";
+    NameModelsListe["facture"] = "facture";
+    NameModelsListe["dmdDepense"] = "dmdDepense";
+    NameModelsListe["depense"] = "depense";
+    NameModelsListe["employer"] = "employer";
+    NameModelsListe["cmpBloquer"] = "cmpBloquer";
+    NameModelsListe["client"] = "client";
+    NameModelsListe["linge"] = "linge";
+    NameModelsListe["typeLinge"] = "typeLinge";
+    NameModelsListe["infoKilo"] = "infoKilo";
+    NameModelsListe["infoPiece"] = "infoPiece";
+    NameModelsListe["detailTypeKilo"] = "detailTypeKilo";
+    NameModelsListe["etatFinancier"] = "etatFinancier";
+    NameModelsListe["detailTypePiece"] = "detailTypePiece";
+})(NameModelsListe = exports.NameModelsListe || (exports.NameModelsListe = {}));
